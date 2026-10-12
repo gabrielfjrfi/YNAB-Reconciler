@@ -4,6 +4,7 @@ import TransactionKit
 struct ReconcileView: View {
     @Bindable var model: ReconcileViewModel
     @State private var presentedSplit: PresentedSplit?
+    @State private var celebrationID: UUID?
 
     var body: some View {
         NavigationStack {
@@ -33,11 +34,24 @@ struct ReconcileView: View {
                         )
                     }
                     .listRowBackground(AppTheme.featureCard.opacity(0.98))
+                    if model.lastRefreshHadNoDiscrepancies {
+                        Text("No gap between UP and YNAB.")
+                            .font(.body)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .multilineTextAlignment(.center)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
                     ForEach(model.actionGroups.filter { !$0.rows.isEmpty }) { group in
-                        ActionGroupSection(group: group, model: model) { row in
-                            presentedSplit = PresentedSplit(id: row.id)
-                        } destination: { row in
-                            RowDetailView(model: model, row: row)
+                        if group.id == .sent {
+                            SentHistorySection(group: group)
+                        } else {
+                            ActionGroupSection(group: group, model: model) { row in
+                                presentedSplit = PresentedSplit(id: row.id)
+                            } destination: { row in
+                                RowDetailView(model: model, row: row)
+                            }
                         }
                     }
                     } else {
@@ -78,22 +92,36 @@ struct ReconcileView: View {
                 refresh: model.refresh
             )
             .overlay {
-                if model.isRefreshing {
-                    ZStack {
-                        Color.black.opacity(0.75)
-                            .ignoresSafeArea()
-
-                        RefreshStatusModal(
-                            message: model.refreshProgress?.message ?? "Refreshing…",
-                            percentComplete: model.refreshProgress?.percentComplete,
-                            cancel: model.cancelRefresh
-                        )
-                        .padding(.horizontal, 32)
+                ZStack {
+                    if let celebrationID {
+                        ReconciliationCelebrationView {
+                            self.celebrationID = nil
+                        }
+                        .id(celebrationID)
+                        .transition(.opacity)
                     }
-                    .transition(.opacity)
+
+                    if model.isRefreshing {
+                        ZStack {
+                            Color.black.opacity(0.75)
+                                .ignoresSafeArea()
+
+                            RefreshStatusModal(
+                                message: model.refreshProgress?.message ?? "Refreshing…",
+                                percentComplete: model.refreshProgress?.percentComplete,
+                                cancel: model.cancelRefresh
+                            )
+                            .padding(.horizontal, 32)
+                        }
+                        .transition(.opacity)
+                    }
                 }
             }
             .animation(.easeInOut(duration: 0.2), value: model.isRefreshing)
+            .onChange(of: model.lastRefreshDate) { _, newValue in
+                guard newValue != nil, model.hasNoDiscrepancies else { return }
+                celebrationID = UUID()
+            }
             .sheet(item: $presentedSplit) { split in
                 SplitPickerView(model: model, depositID: split.id)
             }
@@ -102,6 +130,102 @@ struct ReconcileView: View {
             }
         }
     }
+}
+
+private struct ReconciliationCelebrationView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    let onFinished: () -> Void
+    private let startedAt = Date()
+
+    var body: some View {
+        Group {
+            if !reduceMotion {
+                TimelineView(.animation) { timeline in
+                    Canvas { context, size in
+                        let elapsed = timeline.date.timeIntervalSince(startedAt)
+                        drawConfetti(in: &context, size: size, elapsed: elapsed)
+                    }
+                }
+            }
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .task {
+            try? await Task.sleep(for: .seconds(reduceMotion ? 0.1 : 4.5))
+            onFinished()
+        }
+    }
+
+    private func drawConfetti(
+        in context: inout GraphicsContext,
+        size: CGSize,
+        elapsed: TimeInterval
+    ) {
+        for particle in ConfettiParticle.all {
+            let age = elapsed - particle.delay
+            guard age >= 0, age <= 4.5 else { continue }
+
+            let x = size.width / 2
+                + particle.horizontalVelocity * age
+                + sin(age * 4 + particle.phase) * 12
+            let y = size.height + 12
+                - particle.upwardVelocity * age
+                + 0.5 * 420 * age * age
+            let opacity = age > 3.8 ? max(0, (4.5 - age) / 0.7) : 1
+            let rect = CGRect(
+                x: x - particle.width / 2,
+                y: y - particle.height / 2,
+                width: particle.width,
+                height: particle.height
+            )
+
+            var path = Path()
+            if particle.id.isMultiple(of: 3) {
+                path.addEllipse(in: rect)
+            } else {
+                path.addRect(rect)
+            }
+            context.fill(path, with: .color(particle.color.opacity(opacity)))
+        }
+    }
+}
+
+private struct ConfettiParticle: Identifiable {
+    let id: Int
+    let color: Color
+    let horizontalVelocity: Double
+    let upwardVelocity: Double
+    let delay: Double
+    let width: Double
+    let height: Double
+    let phase: Double
+
+    static let all: [ConfettiParticle] = {
+        let colors: [Color] = [
+            AppTheme.standout,
+            AppTheme.accent,
+            .green,
+            .yellow,
+            .pink,
+            .cyan
+        ]
+        return (0..<72).map { index in
+            let horizontalSeed = (index * 73) % 101
+            let verticalSeed = (index * 47) % 101
+            let sizeSeed = (index * 29) % 5
+            return ConfettiParticle(
+                id: index,
+                color: colors[index % colors.count],
+                horizontalVelocity: Double(horizontalSeed - 50) * 3.2,
+                upwardVelocity: 560 + Double(verticalSeed) * 3.1,
+                delay: Double(index % 12) * 0.018,
+                width: 5 + Double(sizeSeed),
+                height: 9 + Double((sizeSeed + 2) % 5),
+                phase: Double(index) * 0.71
+            )
+        }
+    }()
 }
 
 private struct PullToRefreshModifier: ViewModifier {
@@ -334,6 +458,95 @@ private struct BalanceValueView: View {
     }
 }
 
+private struct SentHistorySection: View {
+    let group: ActionGroup
+    @State private var isExpanded = false
+
+    var body: some View {
+        Section {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.green)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Sent to YNAB")
+                            .font(.headline)
+                            .foregroundStyle(.green)
+                        Text(summary)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                        .accessibilityHidden(true)
+                }
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Sent to YNAB, \(summary)")
+            .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+            .accessibilityHint(isExpanded ? "Collapses sent transactions" : "Shows sent transactions")
+
+            if isExpanded {
+                ForEach(group.rows) { row in
+                    SentHistoryRow(row: row)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+        }
+        .listRowBackground(AppTheme.card.opacity(isExpanded ? 0.78 : 0.58))
+        .listRowSeparatorTint(.white.opacity(0.12))
+    }
+
+    private var summary: String {
+        let noun = group.rows.count == 1 ? "transaction" : "transactions"
+        return "\(group.rows.count) \(noun) · $\(Money(cents: group.subtotalCents).formatted)"
+    }
+}
+
+private struct SentHistoryRow: View {
+    let row: ActionRow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(row.title)
+                    .foregroundStyle(.white.opacity(0.86))
+                Spacer()
+                Text(verbatim: "$\(Money(cents: row.balanceEffectCents).formatted)")
+                    .monospacedDigit()
+                    .foregroundStyle(.white.opacity(0.86))
+            }
+            Text(row.detail)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            HStack {
+                Text(row.date.description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("Sent")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.green)
+            }
+        }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+    }
+}
+
 private struct ActionGroupSection<Destination: View>: View {
     let group: ActionGroup
     let model: ReconcileViewModel
@@ -346,6 +559,7 @@ private struct ActionGroupSection<Destination: View>: View {
                 ActionRowContainer(
                     row: row,
                     isSplit: group.id == .share,
+                    isSent: group.id == .sent,
                     model: model,
                     showSplit: { showSplit(row) },
                     destination: { destination(row) }
@@ -392,6 +606,7 @@ private struct ActionGroupHeader: View {
 private struct ActionRowContainer<Destination: View>: View {
     let row: ActionRow
     let isSplit: Bool
+    let isSent: Bool
     let model: ReconcileViewModel
     let showSplit: () -> Void
     @ViewBuilder let destination: () -> Destination
@@ -404,41 +619,66 @@ private struct ActionRowContainer<Destination: View>: View {
                 SendSelectionButton(model: model, row: row)
                     .padding(.top, 2)
             }
-            VStack(alignment: .leading, spacing: 8) {
-                if isSplit {
-                    Button(action: showSplit) {
-                        ActionRowLabel(
-                            row: row,
-                            status: locked ? .sent : .none
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityHint("Opens the ranked split candidates")
-                    if categoryRequired && !locked {
-                        NavigationLink(destination: destination) {
-                            HStack {
-                                Spacer()
-                                Text("Category required")
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.orange)
-                            }
-                        }
-                        .accessibilityLabel("Choose a category for \(row.title)")
-                    }
-                } else if row.isSendable {
-                    NavigationLink(destination: destination) {
-                        ActionRowLabel(
-                            row: row,
-                            status: locked ? .sent : categoryRequired ? .categoryRequired : .none
-                        )
-                    }
-                    .accessibilityHint("Opens payee and category details")
-                } else {
+
+            if isSent {
+                ActionRowLabel(row: row, status: .sent)
+            } else if isSplit {
+                Button(action: showSplit) {
+                    ActionRowLabel(
+                        row: row,
+                        status: categoryRequired ? .categoryRequired : .none
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Opens the ranked split candidates")
+            } else if row.isSendable && !categoryRequired {
+                NavigationLink(destination: destination) {
                     ActionRowLabel(row: row, status: .none)
+                }
+                .accessibilityHint("Opens payee and category details")
+            } else {
+                ActionRowLabel(
+                    row: row,
+                    status: categoryRequired ? .categoryRequired : .none
+                )
+            }
+
+            if categoryRequired && !locked {
+                HStack(spacing: 0) {
+                    Divider()
+                    CategorySelectionLink(model: model, row: row)
                 }
             }
         }
+    }
+}
+
+private struct CategorySelectionLink: View {
+    let model: ReconcileViewModel
+    let row: ActionRow
+
+    var body: some View {
+        ZStack {
+            NavigationLink {
+                CategoryPickerView(model: model, row: row)
+            } label: {
+                Color.clear
+                    .contentShape(Rectangle())
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .opacity(0.01)
+            .accessibilityLabel("Choose a category for \(row.title)")
+            .accessibilityHint("Opens the YNAB category list")
+
+            Image(systemName: "chevron.right")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(.orange)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
+        .frame(minWidth: 52, maxWidth: 52, minHeight: 44, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .clipped()
     }
 }
 

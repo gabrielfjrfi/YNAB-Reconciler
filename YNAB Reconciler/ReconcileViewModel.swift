@@ -79,6 +79,7 @@ struct ActionGroup: Identifiable, Equatable {
         case share
         case amend
         case query
+        case sent
     }
 
     let id: ID
@@ -184,6 +185,7 @@ final class ReconcileViewModel {
     var review: SendReview?
     var isSending = false
     var sendResultMessage: String?
+    var lastRefreshHadNoDiscrepancies = false
 
     private var upTransactions: [UpTransaction] = []
     private var ynabTransactions: [YNABTransaction] = []
@@ -215,7 +217,7 @@ final class ReconcileViewModel {
 
     var actionGroups: [ActionGroup] {
         guard let reconciliation else { return [] }
-        return [
+        let groups = [
             ActionGroup(
                 id: .add,
                 title: "Enter in YNAB",
@@ -246,6 +248,28 @@ final class ReconcileViewModel {
                 subtotalCents: reconciliation.totals.queryTotalCents
             )
         ]
+        let sentRows = groups.flatMap(\.rows).filter(isLocked)
+        let pendingGroups = groups.map { group in
+            let rows = group.rows.filter { !isLocked($0) }
+            return ActionGroup(
+                id: group.id,
+                title: group.title,
+                explanation: group.explanation,
+                rows: rows,
+                subtotalCents: rows.reduce(0) { $0 + $1.balanceEffectCents }
+            )
+        }
+
+        guard !sentRows.isEmpty else { return pendingGroups }
+        return pendingGroups + [
+            ActionGroup(
+                id: .sent,
+                title: "Sent",
+                explanation: "Transactions already sent to YNAB.",
+                rows: sentRows,
+                subtotalCents: sentRows.reduce(0) { $0 + $1.balanceEffectCents }
+            )
+        ]
     }
 
     var selectedSendCount: Int {
@@ -254,6 +278,15 @@ final class ReconcileViewModel {
 
     var canReview: Bool {
         selectedSendCount > 0 && balanceWarning == nil
+    }
+
+    var hasNoDiscrepancies: Bool {
+        guard let reconciliation,
+              reconciliation.totals.gapCents == 0,
+              balanceWarning == nil else { return false }
+        return actionGroups
+            .filter { $0.id != .sent }
+            .allSatisfy(\.rows.isEmpty)
     }
 
     func refresh() async {
@@ -316,6 +349,7 @@ final class ReconcileViewModel {
             categories = output.categories
             payees = output.payees
             installReconciliation(output.reconciliation)
+            lastRefreshHadNoDiscrepancies = hasNoDiscrepancies
             lastRefreshDate = Date()
             defaults.set(lastRefreshDate, forKey: DefaultsKey.lastRefresh)
             statusMessage = nil
@@ -413,11 +447,19 @@ final class ReconcileViewModel {
 
     func setCategory(_ category: YNABCategory?, for row: ActionRow) {
         var draft = drafts[row.id] ?? TransactionDraft(payee: row.title, categoryID: nil, categoryName: nil)
+        let wasCategoryRequired = draft.categoryID == nil
         draft.categoryID = category?.id
         draft.categoryName = category?.name
         drafts[row.id] = draft
+
         if category == nil {
             selectedRowIDs.remove(row.id)
+        } else if wasCategoryRequired,
+                  balanceWarning == nil,
+                  !pushedLogNeedsReset,
+                  row.isSendable,
+                  !isLocked(row) {
+            selectedRowIDs.insert(row.id)
         }
     }
 
