@@ -1,0 +1,1833 @@
+{
+  "_comment": [
+    "Authoritative reconciliation result for this fixture pair,",
+    "produced by the reference implementation. A correct port",
+    "reproduces it exactly. Never edit this file to make a test pass:",
+    "if your output disagrees, the port is wrong."
+  ],
+  "parameters": {
+    "tolerance": 7,
+    "reimbursement_window": 14,
+    "settle_window": 30,
+    "amend_tolerance_cents": 100,
+    "amend_days": 3,
+    "partners": [
+      "$partner_handle"
+    ],
+    "held_status": "cleared"
+  },
+  "totals": {
+    "up_total_cents": -395400,
+    "ynab_total_cents": -202888,
+    "gap_cents": -192512,
+    "add_total_cents": -131194,
+    "share_total_cents": -61318,
+    "unassigned_repayment_total_cents": 0,
+    "amend_total_cents": 0,
+    "query_total_cents": 0,
+    "identity_holds": true
+  },
+  "counts": {
+    "up": 182,
+    "ynab": 79,
+    "matched": 56,
+    "reversals": 1,
+    "splits_in_ynab": 23,
+    "repaid": 1,
+    "share_blocks": 24,
+    "share_blocks_preselected": 24,
+    "share_blocks_tied": 0,
+    "amends": 0,
+    "adds": 28,
+    "queries": 0
+  },
+  "matched": [
+    {
+      "up_id": "027b7ac4-da81-5b21-b26f-6ab283fc2701",
+      "ynab_id": "138e8e68-cab4-5a0b-b292-36b601203700",
+      "cents": -559,
+      "day_gap": 0
+    },
+    {
+      "up_id": "0c0e8ffd-1d6d-5839-a551-d42fe8dc37c0",
+      "ynab_id": "78e2eabd-e0a4-5c8f-afe6-1e39a3699ab3",
+      "cents": -6077,
+      "day_gap": 0
+    },
+    {
+      "up_id": "0d95b6a1-5638-54bf-a925-4df7bb706d85",
+      "ynab_id": "5ea2bc5f-7440-57dc-8df0-c94d304c555c",
+      "cents": -318,
+      "day_gap": 0
+    },
+    {
+      "up_id": "13152dde-44b3-5037-ba95-1301125f4260",
+      "ynab_id": "5b667309-7c83-5920-a36e-d3432d0d2c03",
+      "cents": -1820,
+      "day_gap": 0
+    },
+    {
+      "up_id": "154c074d-1f69-5fa9-95cf-a4a05571e92b",
+      "ynab_id": "8a051e6b-9d3b-5a16-88cb-fddb41dffae0",
+      "cents": -9774,
+      "day_gap": 0
+    },
+    {
+      "up_id": "1955b2e4-aee5-5bb1-941f-a3e32e5ce89a",
+      "ynab_id": "38c72584-e857-5b68-b6f2-508bdb260d90",
+      "cents": -1117,
+      "day_gap": 0
+    },
+    {
+      "up_id": "19d2aa6e-09e7-5468-8095-146c9c1124c9",
+      "ynab_id": "83ba8621-1cb9-5653-8d44-367d7f209390",
+      "cents": -175,
+      "day_gap": 0
+    },
+    {
+      "up_id": "2879f8a1-4908-5314-b217-66525667c8a2",
+      "ynab_id": "b94ccf3e-501e-5685-a902-b8947549c5f2",
+      "cents": -1900,
+      "day_gap": 0
+    },
+    {
+      "up_id": "29cf15ca-5c0f-5664-8861-9de5797620c5",
+      "ynab_id": "d45bbba8-24d4-5878-9a59-eb09997fd2ac",
+      "cents": -7089,
+      "day_gap": 0
+    },
+    {
+      "up_id": "2a47afa1-d28f-53e5-bc5e-d83f3b5bd7a4",
+      "ynab_id": "8bb197ee-1608-5a76-8e6f-6a82ec078288",
+      "cents": -1149,
+      "day_gap": 0
+    },
+    {
+      "up_id": "2b6379a0-cc94-565d-863d-43f80b1dbd8e",
+      "ynab_id": "294adfe2-c4cc-5665-b131-b1bd9ef570ee",
+      "cents": -3699,
+      "day_gap": 0
+    },
+    {
+      "up_id": "2c034ac0-b7f3-5133-89ae-cb48f1f674a9",
+      "ynab_id": "ec6fbe4f-b841-5d99-8a81-9dfb56e03443",
+      "cents": -1724,
+      "day_gap": 0
+    },
+    {
+      "up_id": "2c3c4c8a-52ca-5699-b352-09230c804483",
+      "ynab_id": "3062385a-f5fa-5429-96c5-5ff22a3aa12b",
+      "cents": -1287,
+      "day_gap": 0
+    },
+    {
+      "up_id": "30a839ee-6d12-5b4b-97f4-d6ee448fe09d",
+      "ynab_id": "63aca75d-c646-524c-b2b9-a5d359006af3",
+      "cents": -1499,
+      "day_gap": 0
+    },
+    {
+      "up_id": "34195a2d-a67c-597a-aeb4-5fde28c7e982",
+      "ynab_id": "689f99c9-910a-5cad-87ef-9b527b02e0e7",
+      "cents": -5990,
+      "day_gap": 0
+    },
+    {
+      "up_id": "380d03d0-1b62-58c9-acac-15dacd8ebb61",
+      "ynab_id": "be62f38f-9c29-5073-b1a2-7ede08299ec3",
+      "cents": -1791,
+      "day_gap": 0
+    },
+    {
+      "up_id": "388d196f-b3f4-5c5d-8ab4-a59f49fc6bdc",
+      "ynab_id": "70b1f66b-bf88-5c79-b5ed-250e05110721",
+      "cents": -606,
+      "day_gap": 0
+    },
+    {
+      "up_id": "3be146dc-9521-58a5-8498-a0a393c48020",
+      "ynab_id": "98ccb60e-a2d0-56ef-b9f7-00dbc3c08cd6",
+      "cents": -1553,
+      "day_gap": 0
+    },
+    {
+      "up_id": "3bf8fa20-cdca-5dc4-bd53-5971f971cff4",
+      "ynab_id": "348f8a20-92f0-5931-9362-58e623449cc0",
+      "cents": -2490,
+      "day_gap": 0
+    },
+    {
+      "up_id": "3bff243e-13b7-5ee9-a56b-34fa2b886fff",
+      "ynab_id": "ef096ed6-7ae1-506f-9c41-4cdaed0fb602",
+      "cents": -1695,
+      "day_gap": 0
+    },
+    {
+      "up_id": "3eccb64d-8428-5e96-a977-6673c2f14d3c",
+      "ynab_id": "30a81bef-6e13-5780-b229-b9c5d7cb0a9d",
+      "cents": -5861,
+      "day_gap": 0
+    },
+    {
+      "up_id": "406ad6b3-4ceb-545b-811e-3a0887d6d2a7",
+      "ynab_id": "3e4787cb-b1ce-54a2-87ea-c59986963993",
+      "cents": -2377,
+      "day_gap": 0
+    },
+    {
+      "up_id": "6092f689-fa2e-5625-9ee1-6fc20f91f6a6",
+      "ynab_id": "04858937-6ca3-59ad-81b1-9676c485b6ae",
+      "cents": -6000,
+      "day_gap": 0
+    },
+    {
+      "up_id": "62b4d121-246e-5b5a-a222-e3c926f16913",
+      "ynab_id": "a013afe0-53ad-5949-8f3b-1590840c73b5",
+      "cents": -397,
+      "day_gap": 0
+    },
+    {
+      "up_id": "66409e3d-95a5-5822-8659-4627ea48b76c",
+      "ynab_id": "3a328129-9bba-5eb4-bcea-54c6606e6e58",
+      "cents": -400,
+      "day_gap": 0
+    },
+    {
+      "up_id": "669fecd2-8f30-5380-8c62-895a75cea96c",
+      "ynab_id": "776c3655-d073-5210-9df2-63a0f0262042",
+      "cents": -611,
+      "day_gap": 0
+    },
+    {
+      "up_id": "671b0081-7de9-5fb4-ac3c-f40dd750d255",
+      "ynab_id": "619339ed-cb2c-5a39-b07d-823888279a41",
+      "cents": -1690,
+      "day_gap": 0
+    },
+    {
+      "up_id": "6943f2ab-ee89-5932-b1ea-dcd13b757052",
+      "ynab_id": "33b5673e-b53b-5708-abf7-a1ab18257135",
+      "cents": -874,
+      "day_gap": 0
+    },
+    {
+      "up_id": "70069c1c-2b52-5cb9-847a-c639b06c5cfc",
+      "ynab_id": "f9747de6-42dc-5395-a492-0c9b34a81be3",
+      "cents": -399,
+      "day_gap": 0
+    },
+    {
+      "up_id": "71667d57-f1e0-5633-bb59-1c3cc9ae99d3",
+      "ynab_id": "c1e0a1c0-62b5-5e9f-b4e8-fbf533ededbd",
+      "cents": -595,
+      "day_gap": 0
+    },
+    {
+      "up_id": "731519f0-1485-583c-a59d-9cd004ad5d08",
+      "ynab_id": "7909bb65-95a3-5a98-9c8b-f25f2a80579e",
+      "cents": -708,
+      "day_gap": 0
+    },
+    {
+      "up_id": "76310513-8aa3-5b17-8561-92d9cf5e0c56",
+      "ynab_id": "5c6e5f78-0fe6-501d-8dab-815832ad243e",
+      "cents": -1100,
+      "day_gap": 0
+    },
+    {
+      "up_id": "7c1bd83f-483b-590d-b07a-d32c0086effc",
+      "ynab_id": "262ff49b-bda6-50b4-995e-4706c02a4a91",
+      "cents": -1256,
+      "day_gap": 0
+    },
+    {
+      "up_id": "8345a256-8ddf-5daf-8065-b4812064e0f9",
+      "ynab_id": "c6c4e96d-3faf-57c4-ae56-674d319bfbe5",
+      "cents": -184,
+      "day_gap": 0
+    },
+    {
+      "up_id": "8749f389-134e-5df0-b2ae-ae3562b62c4f",
+      "ynab_id": "72f1e976-b5ba-5ae3-a766-97ee65f6744f",
+      "cents": -1900,
+      "day_gap": 0
+    },
+    {
+      "up_id": "8db89639-5cce-5df8-8283-879f01aa7998",
+      "ynab_id": "018d88d0-43fc-5015-bcd2-6ff8e6757a09",
+      "cents": -799,
+      "day_gap": 0
+    },
+    {
+      "up_id": "a352e458-a94d-51fb-89f9-4985418c941e",
+      "ynab_id": "f809ff96-7ef9-5f92-8df7-d3419e9d2c33",
+      "cents": -750,
+      "day_gap": 0
+    },
+    {
+      "up_id": "aa0271a5-abef-5887-a027-b56f8b75ab49",
+      "ynab_id": "95a6c05d-935c-5a5d-a3ed-e1acfd7256cf",
+      "cents": -3900,
+      "day_gap": 0
+    },
+    {
+      "up_id": "ac1c4710-371f-5032-a3d1-612c6582b976",
+      "ynab_id": "bc2921fc-cc99-5efe-9536-a3c7b655228f",
+      "cents": -1016,
+      "day_gap": 0
+    },
+    {
+      "up_id": "af965461-0008-5f28-ab0d-e9cab326e751",
+      "ynab_id": "89284a76-14e5-52e4-a3b1-ec9ff0743328",
+      "cents": -2110,
+      "day_gap": 0
+    },
+    {
+      "up_id": "afa9a097-d42e-585a-aa7d-2308373b2077",
+      "ynab_id": "adcb8049-0fcd-586a-be11-000bda4a8726",
+      "cents": -510,
+      "day_gap": 0
+    },
+    {
+      "up_id": "b48f6b02-c541-55e6-8af1-30cf33866643",
+      "ynab_id": "990466da-3db4-5836-8cae-6bb246a745f2",
+      "cents": -1307,
+      "day_gap": 0
+    },
+    {
+      "up_id": "b688c1ec-b237-5689-9bf9-f9743266cd34",
+      "ynab_id": "7e45ee92-4567-5ef1-8b5e-ec36a90d0efe",
+      "cents": -1300,
+      "day_gap": 0
+    },
+    {
+      "up_id": "ba6c4a08-0a91-545a-b1fd-d8ecde275585",
+      "ynab_id": "2139cf87-d182-5d0d-8f15-80226ee43225",
+      "cents": -6550,
+      "day_gap": 0
+    },
+    {
+      "up_id": "ba98f5c6-948a-52a9-a316-e30e06c91a7a",
+      "ynab_id": "71fab47f-fdf8-515d-8018-b80da24f6ecc",
+      "cents": -3597,
+      "day_gap": 0
+    },
+    {
+      "up_id": "bdec9560-4eb4-5031-9dd2-aeffb0923297",
+      "ynab_id": "37a5f62a-6194-5c93-bf87-87b46df94a76",
+      "cents": -3700,
+      "day_gap": 0
+    },
+    {
+      "up_id": "c1e7aeee-f711-5c14-873c-6dc79130339b",
+      "ynab_id": "6b0423f8-800a-5513-aaa6-1d00fd6e01c2",
+      "cents": -920,
+      "day_gap": 0
+    },
+    {
+      "up_id": "c56b575c-efee-5731-9123-b1fd3f506164",
+      "ynab_id": "03238e63-5e8f-57c0-baed-4bcdd4e39078",
+      "cents": -1300,
+      "day_gap": 0
+    },
+    {
+      "up_id": "c85d8b2a-de04-5c2e-a517-5d17af2a9f63",
+      "ynab_id": "bfe1104e-ccda-5dc9-a2d4-81139d424a84",
+      "cents": -2336,
+      "day_gap": 0
+    },
+    {
+      "up_id": "ca9bfd26-41a4-5444-9a6a-f15ab2811f93",
+      "ynab_id": "00cc242a-98ac-5806-ad87-efcbf89d16b9",
+      "cents": -298,
+      "day_gap": 0
+    },
+    {
+      "up_id": "cd859bd5-a4a5-5c62-a0f1-929154888141",
+      "ynab_id": "72881d26-745d-5def-83e9-738b84790f59",
+      "cents": -610,
+      "day_gap": 0
+    },
+    {
+      "up_id": "d8c52ab5-e63a-504f-abed-16bdc382ee9e",
+      "ynab_id": "2b734615-9abd-52cf-88e4-7a66db5e2a4b",
+      "cents": -1214,
+      "day_gap": 0
+    },
+    {
+      "up_id": "e8276989-7633-553d-9da2-8899c7478d89",
+      "ynab_id": "6dd1e6e3-b974-5bef-b4b0-88a8f978a8de",
+      "cents": -9440,
+      "day_gap": 0
+    },
+    {
+      "up_id": "e92bcf53-3633-55c3-bd3e-efdebdf4b6e6",
+      "ynab_id": "beb7575b-5233-5ee0-8827-dd6e523f5fd6",
+      "cents": -15123,
+      "day_gap": 0
+    },
+    {
+      "up_id": "f7154ec5-9906-5e12-b691-199b6f723cef",
+      "ynab_id": "8a0e838e-8deb-5bba-9cfe-e8d93cc949b3",
+      "cents": -100,
+      "day_gap": 0
+    },
+    {
+      "up_id": "ffa1a1d6-c5c7-5bf7-a374-16b40971b1dd",
+      "ynab_id": "11eb40e0-d3b1-58b3-975d-0f9a44748050",
+      "cents": -1599,
+      "day_gap": 0
+    }
+  ],
+  "reversals": [
+    {
+      "purchase_id": "453a0a62-7b8f-5522-b241-d994499d8639",
+      "credit_id": "599a88b0-dc9d-59cc-ae9c-2c5380f3c702",
+      "cents": -10399
+    }
+  ],
+  "splits_in_ynab": [
+    {
+      "ynab_id": "018303cc-635a-51d6-8067-74c2dc8ddeb1",
+      "purchase_id": "f24fff95-d0be-5b01-8b78-60552b2b8780",
+      "deposit_id": "7ec0b0fb-e5cf-53fe-a418-54d507291683",
+      "your_share_cents": -1956
+    },
+    {
+      "ynab_id": "1b5a99aa-e5bb-53e2-aeb4-d1636f3e1891",
+      "purchase_id": "4d5c52f3-cefc-56d4-afb8-35261603b92e",
+      "deposit_id": "f751cbb2-44e4-5b9a-a50d-486a15b79480",
+      "your_share_cents": -7500
+    },
+    {
+      "ynab_id": "20585713-bf5a-5c96-a0e3-bc45aa580cf1",
+      "purchase_id": "131dc97c-4bb7-567c-ac0f-2959bec99227",
+      "deposit_id": "14691092-c3d0-54ea-8fd3-a718760ad98c",
+      "your_share_cents": -1500
+    },
+    {
+      "ynab_id": "20962347-ef73-5ea2-a551-8c3e1d4fb022",
+      "purchase_id": "2992cf6f-f1bd-56a5-aa78-e081009620fd",
+      "deposit_id": "40b25f34-541e-5207-87a6-0a8789a04f07",
+      "your_share_cents": -837
+    },
+    {
+      "ynab_id": "2cbaab42-5bfe-5bc0-be76-c55508d39118",
+      "purchase_id": "16f09702-518b-52d1-baaf-a85713de664a",
+      "deposit_id": "b1423e75-a5c3-5a84-a5c3-106e5eabeec9",
+      "your_share_cents": -2435
+    },
+    {
+      "ynab_id": "2ef4a9d0-3ba6-5338-9602-f5cd6aa9d488",
+      "purchase_id": "4d52c768-84d3-5bad-bca5-dc67fcd6fecc",
+      "deposit_id": "8fdfcdbc-3b80-5569-a858-3f42284ab178",
+      "your_share_cents": -715
+    },
+    {
+      "ynab_id": "4297cd9b-7b46-537f-88e0-a686be9ce6fd",
+      "purchase_id": "c36e4b83-2a24-568d-a056-8277f5c95c65",
+      "deposit_id": "fc7c71b0-94aa-5b02-ac6c-2435df84e8cf",
+      "your_share_cents": -1681
+    },
+    {
+      "ynab_id": "502e17a1-694a-568e-8913-2e0f82de4e1d",
+      "purchase_id": "a64bc9e9-3b8c-50a1-8ed0-2227e60f6d85",
+      "deposit_id": "5fc2945c-549b-55e8-8aaf-55fae58fe97b",
+      "your_share_cents": -2085
+    },
+    {
+      "ynab_id": "539c409c-dbb0-55c4-b083-6153c8d3ae2f",
+      "purchase_id": "87f5b569-75b8-5e59-aebb-eaf0e387cef2",
+      "deposit_id": "5047b8e7-12cb-55d7-a2a7-6f19798f29d1",
+      "your_share_cents": -1399
+    },
+    {
+      "ynab_id": "5a732541-d6c3-5237-aeec-20f324cd0a11",
+      "purchase_id": "48047b05-a0c1-5c0f-a0ee-23be6f5cbcb4",
+      "deposit_id": "94c553d5-9824-53ef-b87c-f56efe64d916",
+      "your_share_cents": -2844
+    },
+    {
+      "ynab_id": "75dcd3c8-8fab-5cea-8e58-6f3953f255ba",
+      "purchase_id": "d78b89cb-ff38-5993-8829-78487318c043",
+      "deposit_id": "b0815ed6-3871-5d20-90fc-7373e231b021",
+      "your_share_cents": -1143
+    },
+    {
+      "ynab_id": "7c6a02c6-691c-50d4-a9e2-7f3d121c4d23",
+      "purchase_id": "b171e4c3-a18a-5083-8e2d-a1cbc565cbc5",
+      "deposit_id": "78b772cf-1bba-5b3b-a99b-84cdb6a9e65f",
+      "your_share_cents": -3678
+    },
+    {
+      "ynab_id": "89a3fd99-a3f1-5f9c-b1a9-b75d9d8a00cd",
+      "purchase_id": "9ee6f733-1769-5378-ae86-a8010ea6ea99",
+      "deposit_id": "107d6be8-607f-54c4-9c11-776da0f36a8b",
+      "your_share_cents": -4500
+    },
+    {
+      "ynab_id": "8b229333-afb5-56ed-8e6c-e26f8d69766b",
+      "purchase_id": "8abee7bd-b667-51c1-8efb-fbcad206d762",
+      "deposit_id": "0f54fc99-ed31-5ad7-b8a4-6090e076ced2",
+      "your_share_cents": -2565
+    },
+    {
+      "ynab_id": "8ca2ca5f-6d28-55c0-abb9-ab47403eaeff",
+      "purchase_id": "6ffd8c40-d638-54cd-b9a3-d53be93d7e95",
+      "deposit_id": "f9efa04b-f3c7-5ff3-b904-f5c9c79ed347",
+      "your_share_cents": -1800
+    },
+    {
+      "ynab_id": "8ff27813-5d12-51dc-914a-db05b6acb926",
+      "purchase_id": "ca93f41c-bcb9-5204-8b72-a6d20e7ad093",
+      "deposit_id": "6981bd14-9be5-5dfc-9dc5-21db6ab47664",
+      "your_share_cents": -852
+    },
+    {
+      "ynab_id": "90be410c-7a3c-5147-a5cf-731d8a992ec6",
+      "purchase_id": "ef0fad1e-002f-5971-aef7-4f5e96d34a89",
+      "deposit_id": "70b2d829-e002-517a-a161-2a1dba0d281b",
+      "your_share_cents": -1875
+    },
+    {
+      "ynab_id": "9ea4ea81-8723-50d5-a284-a8c44cb5f1cb",
+      "purchase_id": "66ea8bb0-95ef-5762-9a99-0c1b74b46472",
+      "deposit_id": "3068e9a6-1f7a-5972-adbf-44f174305256",
+      "your_share_cents": -4305
+    },
+    {
+      "ynab_id": "ad4add68-c2ac-563a-ba91-819304c0f1d6",
+      "purchase_id": "0df07c77-221b-5a63-af6d-f8de477848f4",
+      "deposit_id": "dd98ecc1-152f-5acb-a3e2-33f9bf7b1e07",
+      "your_share_cents": -3151
+    },
+    {
+      "ynab_id": "c4e7d4cd-0c03-587c-ab05-91429d50f237",
+      "purchase_id": "0724a146-e22b-5406-a924-a849e6c3b1fd",
+      "deposit_id": "fa22485d-d610-55eb-96b6-7f2bd88b5dac",
+      "your_share_cents": -11250
+    },
+    {
+      "ynab_id": "ceeb2460-b1de-5196-b659-9577f3d4e7a4",
+      "purchase_id": "75b89ee0-3413-53a5-96fa-fbfd1d9d631a",
+      "deposit_id": "6b1dca1a-2f15-5d41-946d-d4c2132ba48d",
+      "your_share_cents": -784
+    },
+    {
+      "ynab_id": "e8c4fbe8-8284-574b-bf29-e17deafa3ea4",
+      "purchase_id": "d63d4fa0-800d-5c22-9a91-ba971d8be094",
+      "deposit_id": "130533af-41c8-56a1-af8d-921aa09ddf68",
+      "your_share_cents": -2278
+    },
+    {
+      "ynab_id": "ecd83f48-1fac-5ca0-af12-42017ea63e3c",
+      "purchase_id": "dcabb656-8c3a-5868-91b0-8980794bbace",
+      "deposit_id": "38a3f05d-8884-53ac-a1ce-cf205d0d868e",
+      "your_share_cents": -6612
+    }
+  ],
+  "repaid": [
+    {
+      "purchase_id": "c43626f1-f2f7-52e9-bc3c-713d9ff5dba1",
+      "credit_id": "d6f9088d-bf17-5f86-aeb0-557995626a45",
+      "cents": -458
+    }
+  ],
+  "share_blocks": [
+    {
+      "deposit_id": "00b831a7-9cac-5786-8c47-3cff5f9aeb6e",
+      "deposit_cents": 1350,
+      "chosen_purchase_id": "7a3e03c1-e2c4-550f-bc04-d7708a0b6bfd",
+      "your_share_cents": -1350,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "7a3e03c1-e2c4-550f-bc04-d7708a0b6bfd",
+          "purchase_cents": -2700,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 1350,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+          "purchase_cents": -9552,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 8202,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+          "purchase_cents": -12589,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 11239,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "db81adfe-005f-53e5-94d0-abc511e4e664",
+          "purchase_cents": -2235,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 885,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "a8088492-bd9a-528c-8fdb-8ac502629ee0",
+          "purchase_cents": -15300,
+          "score": 34,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 13950,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "14aadcd6-f58c-5d8c-bd90-a0b33ae51c91",
+      "deposit_cents": 575,
+      "chosen_purchase_id": "27dbc984-918f-5143-b32e-1654cf0ec81d",
+      "your_share_cents": -575,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "27dbc984-918f-5143-b32e-1654cf0ec81d",
+          "purchase_cents": -1150,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 575,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "db81adfe-005f-53e5-94d0-abc511e4e664",
+          "purchase_cents": -2235,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1660,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "7a3e03c1-e2c4-550f-bc04-d7708a0b6bfd",
+          "purchase_cents": -2700,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 2125,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+          "purchase_cents": -9552,
+          "score": 36,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 8977,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        },
+        {
+          "purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+          "purchase_cents": -12589,
+          "score": 35,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 12014,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "16999f0a-b889-5e1d-acb7-4bd65eb8900f",
+      "deposit_cents": 1074,
+      "chosen_purchase_id": "913b3e3e-26bc-59e2-b578-9821d5f916ae",
+      "your_share_cents": -1074,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "913b3e3e-26bc-59e2-b578-9821d5f916ae",
+          "purchase_cents": -2148,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 1074,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+          "purchase_cents": -4150,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3076,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "cf7abd61-68c0-5e79-90f0-269193c95aad",
+          "purchase_cents": -6118,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 5044,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "fe232967-c074-5893-bda2-9df38fbef428",
+          "purchase_cents": -6165,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 5091,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+          "purchase_cents": -4324,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3250,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "1a48a336-bd01-5288-8ddc-772d773e7126",
+      "deposit_cents": 6294,
+      "chosen_purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+      "your_share_cents": -6295,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+          "purchase_cents": -12589,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 6295,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+          "purchase_cents": -9552,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3258,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "a8088492-bd9a-528c-8fdb-8ac502629ee0",
+          "purchase_cents": -15300,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 9006,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "38d6c060-74a1-50ef-9588-29cb7dbb667b",
+      "deposit_cents": 2492,
+      "chosen_purchase_id": "bd495f01-446e-595a-b059-45003b28aa37",
+      "your_share_cents": -2493,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "bd495f01-446e-595a-b059-45003b28aa37",
+          "purchase_cents": -4985,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 2493,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "3e20d026-b236-5500-9698-5d23494f4bd5",
+      "deposit_cents": 599,
+      "chosen_purchase_id": "259feafd-ff17-5562-af19-c5c7aea577cd",
+      "your_share_cents": -599,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "259feafd-ff17-5562-af19-c5c7aea577cd",
+          "purchase_cents": -1198,
+          "score": 100,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 599,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "4788a660-3545-5019-98d1-ac6da00220bb",
+      "deposit_cents": 3059,
+      "chosen_purchase_id": "cf7abd61-68c0-5e79-90f0-269193c95aad",
+      "your_share_cents": -3059,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "cf7abd61-68c0-5e79-90f0-269193c95aad",
+          "purchase_cents": -6118,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 3059,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+          "purchase_cents": -4150,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1091,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "fe232967-c074-5893-bda2-9df38fbef428",
+          "purchase_cents": -6165,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3106,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+          "purchase_cents": -4324,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1265,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "52d2e5be-5298-556c-9868-ebe72148a49e",
+      "deposit_cents": 1500,
+      "chosen_purchase_id": "d3d2998f-75aa-5124-bef7-cf8437eb45bc",
+      "your_share_cents": -2900,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "d3d2998f-75aa-5124-bef7-cf8437eb45bc",
+          "purchase_cents": -4400,
+          "score": 61,
+          "band": 3,
+          "joint_best": false,
+          "your_share_cents": 2900,
+          "reasons": [
+            "same category",
+            "leaves a round 29.00",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "163c2cb3-993d-5772-98f6-d35878c70345",
+          "purchase_cents": -8461,
+          "score": 52,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 6961,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "a60ab9f9-5cec-51bd-aa44-3e0e129e75be",
+          "purchase_cents": -6628,
+          "score": 51,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 5128,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "e09c68b1-e65d-549f-b0ad-3fd4003025b5",
+          "purchase_cents": -1527,
+          "score": 39,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 27,
+          "reasons": [
+            "same category",
+            "round repayment",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "5fdfc900-c3ef-5c0e-8b84-b5c0dd2dc35d",
+      "deposit_cents": 3750,
+      "chosen_purchase_id": "1bc3d727-ca49-52a7-b9f1-78ce13460173",
+      "your_share_cents": -3750,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "1bc3d727-ca49-52a7-b9f1-78ce13460173",
+          "purchase_cents": -7500,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 3750,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "62fff4c0-4a63-52df-89b1-140803d8628a",
+      "deposit_cents": 763,
+      "chosen_purchase_id": "e09c68b1-e65d-549f-b0ad-3fd4003025b5",
+      "your_share_cents": -764,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "e09c68b1-e65d-549f-b0ad-3fd4003025b5",
+          "purchase_cents": -1527,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 764,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "a60ab9f9-5cec-51bd-aa44-3e0e129e75be",
+          "purchase_cents": -6628,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 5865,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "d3d2998f-75aa-5124-bef7-cf8437eb45bc",
+          "purchase_cents": -4400,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3637,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "163c2cb3-993d-5772-98f6-d35878c70345",
+          "purchase_cents": -8461,
+          "score": 35,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 7698,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "67e4b03e-a89b-5fa3-a253-544c3ff073d0",
+      "deposit_cents": 5100,
+      "chosen_purchase_id": "a8088492-bd9a-528c-8fdb-8ac502629ee0",
+      "your_share_cents": -10200,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "a8088492-bd9a-528c-8fdb-8ac502629ee0",
+          "purchase_cents": -15300,
+          "score": 83,
+          "band": 2,
+          "joint_best": false,
+          "your_share_cents": 10200,
+          "reasons": [
+            "same category",
+            "exactly a third",
+            "leaves a round 102.00",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+          "purchase_cents": -9552,
+          "score": 53,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 4452,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+          "purchase_cents": -12589,
+          "score": 52,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 7489,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "76ba4403-8d45-566a-b143-aed8a4d23fd1",
+      "deposit_cents": 3450,
+      "chosen_purchase_id": "231796cb-ed97-5db5-99d0-f959c5d44141",
+      "your_share_cents": -3450,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "231796cb-ed97-5db5-99d0-f959c5d44141",
+          "purchase_cents": -6900,
+          "score": 93,
+          "band": 1,
+          "joint_best": false,
+          "your_share_cents": 3450,
+          "reasons": [
+            "exactly half"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "788beef3-40c9-5b34-80f3-9033ec8d8146",
+      "deposit_cents": 913,
+      "chosen_purchase_id": "455519ed-2732-5ffa-8c76-c1a854418d1b",
+      "your_share_cents": -914,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "455519ed-2732-5ffa-8c76-c1a854418d1b",
+          "purchase_cents": -1827,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 914,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "612d03bd-4284-5a34-86d1-f8f40ec8c9b5",
+          "purchase_cents": -5498,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 4585,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "9ddd1660-235f-500f-a0a2-a2aaedb8602a",
+      "deposit_cents": 3314,
+      "chosen_purchase_id": "a60ab9f9-5cec-51bd-aa44-3e0e129e75be",
+      "your_share_cents": -3314,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "a60ab9f9-5cec-51bd-aa44-3e0e129e75be",
+          "purchase_cents": -6628,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 3314,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "163c2cb3-993d-5772-98f6-d35878c70345",
+          "purchase_cents": -8461,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 5147,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "d3d2998f-75aa-5124-bef7-cf8437eb45bc",
+          "purchase_cents": -4400,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1086,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "9f87f720-592d-58e8-b127-db86e6fab195",
+      "deposit_cents": 450,
+      "chosen_purchase_id": "ae6b7627-5ffe-58e8-b7b6-fbef322016cc",
+      "your_share_cents": -450,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "ae6b7627-5ffe-58e8-b7b6-fbef322016cc",
+          "purchase_cents": -900,
+          "score": 93,
+          "band": 1,
+          "joint_best": false,
+          "your_share_cents": 450,
+          "reasons": [
+            "exactly half"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "b9dc8d09-3af2-550c-8bc7-7d82f0e33784",
+      "deposit_cents": 558,
+      "chosen_purchase_id": "5eb22b1c-82ed-5b10-aa53-5b0f9a50a14a",
+      "your_share_cents": -559,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "5eb22b1c-82ed-5b10-aa53-5b0f9a50a14a",
+          "purchase_cents": -1117,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 559,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+          "purchase_cents": -4150,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3592,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "913b3e3e-26bc-59e2-b578-9821d5f916ae",
+          "purchase_cents": -2148,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1590,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "d08e852f-5f6c-5d12-965d-0bbbcb4588e6",
+          "purchase_cents": -1200,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 642,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+          "purchase_cents": -4324,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3766,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "baa556b8-4501-5dc2-9c49-0c098d3d7eb5",
+      "deposit_cents": 2055,
+      "chosen_purchase_id": "fe232967-c074-5893-bda2-9df38fbef428",
+      "your_share_cents": -4110,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "fe232967-c074-5893-bda2-9df38fbef428",
+          "purchase_cents": -6165,
+          "score": 68,
+          "band": 2,
+          "joint_best": false,
+          "your_share_cents": 4110,
+          "reasons": [
+            "same category",
+            "exactly a third"
+          ]
+        },
+        {
+          "purchase_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+          "purchase_cents": -4150,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 2095,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "cf7abd61-68c0-5e79-90f0-269193c95aad",
+          "purchase_cents": -6118,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 4063,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+          "purchase_cents": -4324,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 2269,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "913b3e3e-26bc-59e2-b578-9821d5f916ae",
+          "purchase_cents": -2148,
+          "score": 35,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 93,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "c67f7c8b-a473-5f76-a825-3dbcdf491f52",
+      "deposit_cents": 4230,
+      "chosen_purchase_id": "163c2cb3-993d-5772-98f6-d35878c70345",
+      "your_share_cents": -4231,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "163c2cb3-993d-5772-98f6-d35878c70345",
+          "purchase_cents": -8461,
+          "score": 100,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 4231,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "a60ab9f9-5cec-51bd-aa44-3e0e129e75be",
+          "purchase_cents": -6628,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 2398,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "d3d2998f-75aa-5124-bef7-cf8437eb45bc",
+          "purchase_cents": -4400,
+          "score": 34,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 170,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "d3a4bfef-cc51-5ee7-b36a-091812266822",
+      "deposit_cents": 5852,
+      "chosen_purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+      "your_share_cents": -3700,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+          "purchase_cents": -9552,
+          "score": 58,
+          "band": 3,
+          "joint_best": false,
+          "your_share_cents": 3700,
+          "reasons": [
+            "same category",
+            "leaves a round 37.00"
+          ]
+        },
+        {
+          "purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+          "purchase_cents": -12589,
+          "score": 47,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 6737,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "a8088492-bd9a-528c-8fdb-8ac502629ee0",
+          "purchase_cents": -15300,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 9448,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "d45a170b-3b87-5e15-b92a-6c59f2397a1d",
+      "deposit_cents": 2162,
+      "chosen_purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+      "your_share_cents": -2162,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+          "purchase_cents": -4324,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 2162,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+          "purchase_cents": -4150,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1988,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "cf7abd61-68c0-5e79-90f0-269193c95aad",
+          "purchase_cents": -6118,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3956,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "fe232967-c074-5893-bda2-9df38fbef428",
+          "purchase_cents": -6165,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 4003,
+          "reasons": [
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "dd5f4568-13fd-5a60-a565-3690c604df87",
+      "deposit_cents": 600,
+      "chosen_purchase_id": "d08e852f-5f6c-5d12-965d-0bbbcb4588e6",
+      "your_share_cents": -600,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "d08e852f-5f6c-5d12-965d-0bbbcb4588e6",
+          "purchase_cents": -1200,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 600,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+          "purchase_cents": -4150,
+          "score": 53,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3550,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "913b3e3e-26bc-59e2-b578-9821d5f916ae",
+          "purchase_cents": -2148,
+          "score": 52,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1548,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "5eb22b1c-82ed-5b10-aa53-5b0f9a50a14a",
+          "purchase_cents": -1117,
+          "score": 51,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 517,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        },
+        {
+          "purchase_id": "5a8deb91-95fe-50e7-88bf-2881fd9acdac",
+          "purchase_cents": -4324,
+          "score": 51,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 3724,
+          "reasons": [
+            "same category",
+            "round repayment"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "e41f48fa-ac3b-5521-b242-7017ccd83457",
+      "deposit_cents": 2886,
+      "chosen_purchase_id": "cb8fc9e8-3c4b-50dc-8f2f-42464adc22c5",
+      "your_share_cents": -2887,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "cb8fc9e8-3c4b-50dc-8f2f-42464adc22c5",
+          "purchase_cents": -5773,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 2887,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "e4c8a06c-15a5-572d-ae2e-41b4015f3d0e",
+      "deposit_cents": 1117,
+      "chosen_purchase_id": "db81adfe-005f-53e5-94d0-abc511e4e664",
+      "your_share_cents": -1118,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "db81adfe-005f-53e5-94d0-abc511e4e664",
+          "purchase_cents": -2235,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 1118,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "4eb12a4f-2c1e-564b-9b97-1c9d8eb170da",
+          "purchase_cents": -9552,
+          "score": 48,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 8435,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "7a3e03c1-e2c4-550f-bc04-d7708a0b6bfd",
+          "purchase_cents": -2700,
+          "score": 46,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 1583,
+          "reasons": [
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "ade85222-02ca-5817-a451-a8b88a9d2b90",
+          "purchase_cents": -12589,
+          "score": 35,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 11472,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        },
+        {
+          "purchase_id": "a8088492-bd9a-528c-8fdb-8ac502629ee0",
+          "purchase_cents": -15300,
+          "score": 34,
+          "band": null,
+          "joint_best": false,
+          "your_share_cents": 14183,
+          "reasons": [
+            "same category",
+            "lopsided share"
+          ]
+        }
+      ]
+    },
+    {
+      "deposit_id": "fa287b6b-8370-55ee-bd0c-8b63eb5b8262",
+      "deposit_cents": 764,
+      "chosen_purchase_id": "09815ab6-a55f-56bb-99f3-5b8ff797bb33",
+      "your_share_cents": -764,
+      "tied": false,
+      "candidates": [
+        {
+          "purchase_id": "09815ab6-a55f-56bb-99f3-5b8ff797bb33",
+          "purchase_cents": -1528,
+          "score": 99,
+          "band": 0,
+          "joint_best": false,
+          "your_share_cents": 764,
+          "reasons": [
+            "exactly half",
+            "same category"
+          ]
+        },
+        {
+          "purchase_id": "e09c68b1-e65d-549f-b0ad-3fd4003025b5",
+          "purchase_cents": -1527,
+          "score": 93,
+          "band": 1,
+          "joint_best": false,
+          "your_share_cents": 763,
+          "reasons": [
+            "exactly half"
+          ]
+        }
+      ]
+    }
+  ],
+  "amends": [],
+  "adds": [
+    {
+      "up_id": "10c7f2e0-b8f5-5f2f-b4b3-719fd0a9add2",
+      "cents": -285,
+      "date": "2026-09-19",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "2015bfdd-80a5-50e3-8a1f-cb5941d133a7",
+      "cents": -1689,
+      "date": "2026-09-13",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "2f062367-885d-5da9-b19a-4934520b3789",
+      "cents": -100,
+      "date": "2026-09-21",
+      "status": "HELD",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "3fd52df9-5fd0-578b-a87b-bed6e4b8d4ee",
+      "cents": -499,
+      "date": "2026-09-15",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "4f6e0cca-ae69-51a7-b39b-bc6db158460b",
+      "cents": -746,
+      "date": "2026-09-19",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "5dab1674-a88e-5f74-ab27-693823201c47",
+      "cents": -3500,
+      "date": "2026-09-15",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "612d03bd-4284-5a34-86d1-f8f40ec8c9b5",
+      "cents": -5498,
+      "date": "2026-09-17",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "784b267d-f62a-51c0-92d5-b0175b529319",
+      "cents": -909,
+      "date": "2026-09-14",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "7eb0f613-707a-5e56-b7eb-f7e89819eb05",
+      "cents": -6690,
+      "date": "2026-09-20",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "7f2e522f-a045-5445-8da6-86f2eb4f9497",
+      "cents": -628,
+      "date": "2026-09-15",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "893ba8de-1a52-5526-b46c-40f331c38880",
+      "cents": -2294,
+      "date": "2026-09-13",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "8b3fc74d-f470-580a-b114-abf1938121e9",
+      "cents": -965,
+      "date": "2026-09-16",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "8e501ccc-f726-5eb8-bd64-30f3b2268905",
+      "cents": -8284,
+      "date": "2026-09-18",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "8e874d4a-0e36-5ed4-946e-e12276fb7e1a",
+      "cents": -14999,
+      "date": "2026-09-20",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "9c763898-a4e0-5c17-a18b-2104a9b3511d",
+      "cents": -5700,
+      "date": "2026-09-16",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "9d51e676-e521-5094-8aec-a0c4d49690b1",
+      "cents": -7999,
+      "date": "2026-09-17",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "a3d88069-b6b0-5e8b-928c-6f5eeaace28c",
+      "cents": -2294,
+      "date": "2026-09-20",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "a5caa53b-04e1-5e7c-be69-658c2965fe0b",
+      "cents": -9440,
+      "date": "2026-09-21",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "b411f207-402c-51d3-ac40-2ae0b86f3ea1",
+      "cents": -4150,
+      "date": "2026-09-22",
+      "status": "HELD",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "bfd3bcd0-ebec-5c77-8c73-d965772b9915",
+      "cents": -16487,
+      "date": "2026-09-20",
+      "status": "HELD",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "c1aead3a-9bf5-5391-841a-f831d1476144",
+      "cents": -26000,
+      "date": "2026-09-21",
+      "status": "HELD",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "cda159fb-587d-595e-b38b-d96d69b83a50",
+      "cents": -285,
+      "date": "2026-09-01",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "cda814e1-1903-5ec9-9068-e693d317958e",
+      "cents": -1367,
+      "date": "2026-09-21",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "dfbee382-fe37-55b8-9fff-52ab33bcee6c",
+      "cents": -5000,
+      "date": "2026-09-14",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "e827cfe6-496b-533a-b2c9-7af918d52cf5",
+      "cents": -2798,
+      "date": "2026-09-16",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "ecb70386-60af-547d-8c88-abf1b09f80f9",
+      "cents": -1066,
+      "date": "2026-09-17",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "f0a2e474-8471-5ad4-82fa-5ef2d346dc15",
+      "cents": -350,
+      "date": "2026-09-20",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    },
+    {
+      "up_id": "f5e46b17-906d-5e34-8815-1a3a701002e2",
+      "cents": -1172,
+      "date": "2026-09-16",
+      "status": "SETTLED",
+      "cleared": "cleared"
+    }
+  ],
+  "queries": []
+}

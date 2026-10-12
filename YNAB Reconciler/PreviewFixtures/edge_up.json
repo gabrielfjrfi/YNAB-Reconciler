@@ -1,0 +1,1133 @@
+{
+  "data": [
+    {
+      "type": "transactions",
+      "id": "679274bd-98b5-582b-9736-06e30c8bf5da",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT A",
+        "description": "Merchant A",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-25.00",
+          "valueInBaseUnits": -2500
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-01T12:00:00+10:00",
+        "createdAt": "2026-10-01T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "groceries"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "189afbb3-9784-57cd-ac7e-f02e1271a4c6",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT B",
+        "description": "Merchant B",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-18.75",
+          "valueInBaseUnits": -1875
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-02T12:00:00+10:00",
+        "createdAt": "2026-10-02T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "restaurants-and-cafes"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "b2e1702b-15ca-51a1-b6da-cfe7f870afd3",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT C",
+        "description": "Merchant C",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-10.00",
+          "valueInBaseUnits": -1000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-03T12:00:00+10:00",
+        "createdAt": "2026-10-03T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "132ea90f-98bd-5741-a070-480615a25cdd",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT C",
+        "description": "Merchant C",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-10.00",
+          "valueInBaseUnits": -1000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-08T12:00:00+10:00",
+        "createdAt": "2026-10-08T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "transport"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "396b1b7c-a03a-57a9-9a0d-c4d9f42d4f1f",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT D",
+        "description": "Merchant D",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-10.16",
+          "valueInBaseUnits": -1016
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-04T12:00:00+10:00",
+        "createdAt": "2026-10-04T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "pubs-and-bars"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "0ec2b128-44ff-56ed-8296-d77419e1d4b2",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT F",
+        "description": "Merchant F",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-103.99",
+          "valueInBaseUnits": -10399
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-07T12:00:00+10:00",
+        "createdAt": "2026-10-07T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "technology"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "6044973b-7e71-5dd2-b367-2c46648306c8",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT F",
+        "description": "Merchant F",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-149.99",
+          "valueInBaseUnits": -14999
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-07T12:00:00+10:00",
+        "createdAt": "2026-10-07T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "technology"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "69f04898-4cdf-571d-8673-097ecb1a854b",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT F",
+        "description": "Merchant F",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "103.99",
+          "valueInBaseUnits": 10399
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-07T12:00:00+10:00",
+        "createdAt": "2026-10-07T09:00:00+10:00",
+        "transactionType": "Refund",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "technology"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "6483441d-ab8f-5f4a-afbd-11945c26d25e",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT G",
+        "description": "Merchant G",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-60.00",
+          "valueInBaseUnits": -6000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-10T12:00:00+10:00",
+        "createdAt": "2026-10-10T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "restaurants-and-cafes"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "74e2eedf-5d5d-598d-b23e-d754e3acde48",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "$PARTNER_HANDLE",
+        "description": "$partner_handle",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "30.00",
+          "valueInBaseUnits": 3000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-12T12:00:00+10:00",
+        "createdAt": "2026-10-12T09:00:00+10:00",
+        "transactionType": "Deposit",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "restaurants-and-cafes"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "6507d976-006e-58ed-b3f9-2e23cb4719e8",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT H",
+        "description": "Merchant H",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-40.00",
+          "valueInBaseUnits": -4000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-13T12:00:00+10:00",
+        "createdAt": "2026-10-13T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": null
+        },
+        "parentCategory": {
+          "data": null
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "6cd4c2cb-375b-5a8a-b3c4-d2c67ae18d3b",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "$PARTNER_HANDLE",
+        "description": "$partner_handle",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "20.00",
+          "valueInBaseUnits": 2000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-15T12:00:00+10:00",
+        "createdAt": "2026-10-15T09:00:00+10:00",
+        "transactionType": "Deposit",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": null
+        },
+        "parentCategory": {
+          "data": null
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "ceca15d3-a35f-5b32-9f4d-af15e17eee8d",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT I",
+        "description": "Merchant I",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-50.00",
+          "valueInBaseUnits": -5000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-16T12:00:00+10:00",
+        "createdAt": "2026-10-16T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": null
+        },
+        "parentCategory": {
+          "data": null
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "a00311f5-d026-5c8a-a5f0-df6b80fce7d4",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT J",
+        "description": "Merchant J",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-50.00",
+          "valueInBaseUnits": -5000
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-16T12:00:00+10:00",
+        "createdAt": "2026-10-16T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": null
+        },
+        "parentCategory": {
+          "data": null
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "d24d7cf8-08dd-5091-9498-793708427e2d",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "$PARTNER_HANDLE",
+        "description": "$partner_handle",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "25.00",
+          "valueInBaseUnits": 2500
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-18T12:00:00+10:00",
+        "createdAt": "2026-10-18T09:00:00+10:00",
+        "transactionType": "Deposit",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": null
+        },
+        "parentCategory": {
+          "data": null
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "129db2b3-a3a1-502b-b1cb-643a745d6e7c",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT K",
+        "description": "Merchant K",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-11.17",
+          "valueInBaseUnits": -1117
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-19T12:00:00+10:00",
+        "createdAt": "2026-10-19T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "restaurants-and-cafes"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "b7dccf1f-8d90-5c28-92a9-8491526f6263",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "$PARTNER_HANDLE",
+        "description": "$partner_handle",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "5.58",
+          "valueInBaseUnits": 558
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-20T12:00:00+10:00",
+        "createdAt": "2026-10-20T09:00:00+10:00",
+        "transactionType": "Deposit",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "restaurants-and-cafes"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "c32921fc-1d56-5346-9002-a12960b96770",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "$PARTNER_HANDLE",
+        "description": "$partner_handle",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "7.77",
+          "valueInBaseUnits": 777
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-21T12:00:00+10:00",
+        "createdAt": "2026-10-21T09:00:00+10:00",
+        "transactionType": "Deposit",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "restaurants-and-cafes"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "74bf7b45-56ee-583f-b8e7-e9c2966d9d2e",
+      "attributes": {
+        "status": "HELD",
+        "rawText": "MERCHANT L",
+        "description": "Merchant L",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-88.99",
+          "valueInBaseUnits": -8899
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": null,
+        "createdAt": "2026-10-22T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "technology"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "home"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "fc5f1605-32ee-5dbe-8a9d-8ceaec099614",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "MERCHANT M",
+        "description": "Merchant M",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "-45.00",
+          "valueInBaseUnits": -4500
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-23T12:00:00+10:00",
+        "createdAt": "2026-10-23T09:00:00+10:00",
+        "transactionType": "Purchase",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "pubs-and-bars"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    },
+    {
+      "type": "transactions",
+      "id": "989c4328-68d1-57e9-8451-3bb913eda399",
+      "attributes": {
+        "status": "SETTLED",
+        "rawText": "$PARTNER_HANDLE",
+        "description": "$partner_handle",
+        "message": null,
+        "isCategorizable": true,
+        "holdInfo": null,
+        "roundUp": null,
+        "cashback": null,
+        "amount": {
+          "currencyCode": "AUD",
+          "value": "45.00",
+          "valueInBaseUnits": 4500
+        },
+        "foreignAmount": null,
+        "cardPurchaseMethod": null,
+        "settledAt": "2026-10-24T12:00:00+10:00",
+        "createdAt": "2026-10-24T09:00:00+10:00",
+        "transactionType": "Deposit",
+        "note": null,
+        "performingCustomer": null
+      },
+      "relationships": {
+        "account": {
+          "data": {
+            "type": "accounts",
+            "id": "f029b115-ded2-5316-89e1-24be1c2d45f2"
+          }
+        },
+        "transferAccount": {
+          "data": null
+        },
+        "category": {
+          "data": {
+            "type": "categories",
+            "id": "pubs-and-bars"
+          }
+        },
+        "parentCategory": {
+          "data": {
+            "type": "categories",
+            "id": "good-life"
+          }
+        },
+        "tags": {
+          "data": []
+        }
+      },
+      "links": {
+        "self": ""
+      }
+    }
+  ],
+  "meta": {
+    "count": 21,
+    "pages": 1
+  }
+}
