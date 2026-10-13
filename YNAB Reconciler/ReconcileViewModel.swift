@@ -56,6 +56,15 @@ struct TransactionDraft: Equatable {
     var categoryName: String?
 }
 
+struct AccountBalances: Equatable, Sendable {
+    let upCents: Int
+    let ynabCents: Int
+
+    var differenceCents: Int {
+        upCents - ynabCents
+    }
+}
+
 struct ActionRow: Identifiable, Equatable {
     enum Kind: Equatable {
         case add
@@ -145,6 +154,7 @@ final class ReconcileViewModel {
         let ynab: [YNABTransaction]
         let categories: [YNABCategoryGroup]
         let payees: [String]
+        let accountBalances: AccountBalances
         let reconciliation: Reconciliation
     }
 
@@ -168,6 +178,7 @@ final class ReconcileViewModel {
     }
 
     var reconciliation: Reconciliation?
+    var accountBalances: AccountBalances?
     var categories: [YNABCategoryGroup] = []
     var payees: [String] = []
     var settings: ReconcileSettings
@@ -276,6 +287,12 @@ final class ReconcileViewModel {
         selectedRowIDs.count
     }
 
+    var hasPendingTransactions: Bool {
+        actionGroups.contains { group in
+            group.id != .sent && !group.rows.isEmpty
+        }
+    }
+
     var canReview: Bool {
         selectedSendCount > 0 && balanceWarning == nil
     }
@@ -348,6 +365,7 @@ final class ReconcileViewModel {
             ynabTransactions = output.ynab
             categories = output.categories
             payees = output.payees
+            accountBalances = output.accountBalances
             installReconciliation(output.reconciliation)
             lastRefreshHadNoDiscrepancies = hasNoDiscrepancies
             lastRefreshDate = Date()
@@ -675,6 +693,11 @@ final class ReconcileViewModel {
             let upClient = UpClient(token: upToken, httpClient: httpClient, cache: cache)
             let ynabClient = YNABClient(token: ynabToken, httpClient: httpClient, cache: cache)
 
+            async let fetchedUpBalance = upClient.fetchBalanceCents(accountID: upAccountID)
+            async let fetchedYNABBalance = ynabClient.fetchBalanceCents(
+                planID: planID,
+                accountID: accountID
+            )
             async let fetchedUp = upClient.fetchTransactions(
                 since: since,
                 timeZone: timeZone,
@@ -693,7 +716,9 @@ final class ReconcileViewModel {
             async let fetchedCategories = ynabClient.fetchCategories(planID: planID)
             async let fetchedPayees = ynabClient.fetchPayees(planID: planID)
 
-            let (up, ynab, categoryGroups, payeeNames) = try await (
+            let (upBalance, ynabBalance, up, ynab, categoryGroups, payeeNames) = try await (
+                fetchedUpBalance,
+                fetchedYNABBalance,
                 fetchedUp,
                 fetchedYNAB,
                 fetchedCategories,
@@ -716,6 +741,10 @@ final class ReconcileViewModel {
                 ynab: ynab,
                 categories: categoryGroups,
                 payees: payeeNames,
+                accountBalances: AccountBalances(
+                    upCents: upBalance,
+                    ynabCents: ynabBalance
+                ),
                 reconciliation: reconciliation
             )
         }

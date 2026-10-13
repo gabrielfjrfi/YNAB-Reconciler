@@ -3,7 +3,6 @@ import TransactionKit
 
 struct ReconcileView: View {
     @Bindable var model: ReconcileViewModel
-    @State private var presentedSplit: PresentedSplit?
     @State private var celebrationID: UUID?
 
     var body: some View {
@@ -12,7 +11,10 @@ struct ReconcileView: View {
                 Group {
                     if let reconciliation = model.reconciliation {
                     Section {
-                        BalanceSummaryView(totals: reconciliation.totals)
+                        BalanceSummaryView(
+                            totals: reconciliation.totals,
+                            accountBalances: model.accountBalances
+                        )
                     }
                     .listRowBackground(AppTheme.featureCard.opacity(0.98))
                     if let warning = model.balanceWarning {
@@ -28,12 +30,14 @@ struct ReconcileView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    Section {
-                        SendSelectionSummaryView(
-                            selectedCount: model.selectedSendCount
-                        )
+                    if model.hasPendingTransactions {
+                        Section {
+                            SendSelectionSummaryView(
+                                selectedCount: model.selectedSendCount
+                            )
+                        }
+                        .listRowBackground(AppTheme.featureCard.opacity(0.98))
                     }
-                    .listRowBackground(AppTheme.featureCard.opacity(0.98))
                     if model.lastRefreshHadNoDiscrepancies {
                         Text("No gap between UP and YNAB.")
                             .font(.body)
@@ -48,8 +52,6 @@ struct ReconcileView: View {
                             SentHistorySection(group: group)
                         } else {
                             ActionGroupSection(group: group, model: model) { row in
-                                presentedSplit = PresentedSplit(id: row.id)
-                            } destination: { row in
                                 RowDetailView(model: model, row: row)
                             }
                         }
@@ -121,9 +123,6 @@ struct ReconcileView: View {
             .onChange(of: model.lastRefreshDate) { _, newValue in
                 guard newValue != nil, model.hasNoDiscrepancies else { return }
                 celebrationID = UUID()
-            }
-            .sheet(item: $presentedSplit) { split in
-                SplitPickerView(model: model, depositID: split.id)
             }
             .sheet(item: $model.review) { review in
                 ReviewSheet(model: model, review: review)
@@ -414,26 +413,35 @@ private struct SendSelectionSummaryView: View {
     }
 }
 
-private struct PresentedSplit: Identifiable {
-    let id: String
-}
-
 private struct BalanceSummaryView: View {
     let totals: ReconciliationTotals
+    let accountBalances: AccountBalances?
+
+    private var upCents: Int {
+        accountBalances?.upCents ?? totals.upTotalCents
+    }
+
+    private var ynabCents: Int {
+        accountBalances?.ynabCents ?? totals.ynabTotalCents
+    }
+
+    private var differenceCents: Int {
+        accountBalances?.differenceCents ?? totals.gapCents
+    }
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
             HStack(alignment: .top) {
-                BalanceValueView(title: "Up", cents: totals.upTotalCents)
+                BalanceValueView(title: "Up", cents: upCents)
                 Spacer()
-                BalanceValueView(title: "YNAB", cents: totals.ynabTotalCents)
+                BalanceValueView(title: "YNAB", cents: ynabCents)
                 Spacer()
-                BalanceValueView(title: "Difference", cents: totals.gapCents, emphasized: true)
+                BalanceValueView(title: "Difference", cents: differenceCents, emphasized: true)
             }
             VStack(alignment: .leading) {
-                BalanceValueView(title: "Up", cents: totals.upTotalCents)
-                BalanceValueView(title: "YNAB", cents: totals.ynabTotalCents)
-                BalanceValueView(title: "Difference", cents: totals.gapCents, emphasized: true)
+                BalanceValueView(title: "Up", cents: upCents)
+                BalanceValueView(title: "YNAB", cents: ynabCents)
+                BalanceValueView(title: "Difference", cents: differenceCents, emphasized: true)
             }
         }
         .accessibilityElement(children: .contain)
@@ -524,6 +532,9 @@ private struct SentHistoryRow: View {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(row.title)
                     .foregroundStyle(.white.opacity(0.86))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .layoutPriority(1)
                 Spacer()
                 Text(verbatim: "$\(Money(cents: row.balanceEffectCents).formatted)")
                     .monospacedDigit()
@@ -532,6 +543,8 @@ private struct SentHistoryRow: View {
             Text(row.detail)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
             HStack {
                 Text(row.date.description)
                     .font(.caption)
@@ -550,7 +563,6 @@ private struct SentHistoryRow: View {
 private struct ActionGroupSection<Destination: View>: View {
     let group: ActionGroup
     let model: ReconcileViewModel
-    let showSplit: (ActionRow) -> Void
     @ViewBuilder let destination: (ActionRow) -> Destination
 
     var body: some View {
@@ -558,10 +570,7 @@ private struct ActionGroupSection<Destination: View>: View {
             ForEach(group.rows) { row in
                 ActionRowContainer(
                     row: row,
-                    isSplit: group.id == .share,
-                    isSent: group.id == .sent,
                     model: model,
-                    showSplit: { showSplit(row) },
                     destination: { destination(row) }
                 )
             }
@@ -605,50 +614,93 @@ private struct ActionGroupHeader: View {
 
 private struct ActionRowContainer<Destination: View>: View {
     let row: ActionRow
-    let isSplit: Bool
-    let isSent: Bool
     let model: ReconcileViewModel
-    let showSplit: () -> Void
     @ViewBuilder let destination: () -> Destination
 
     var body: some View {
         let locked = model.isLocked(row)
         let categoryRequired = row.isSendable && model.draft(for: row).categoryID == nil
+
         HStack(alignment: .top, spacing: 12) {
             if row.isSendable && !locked {
                 SendSelectionButton(model: model, row: row)
                     .padding(.top, 2)
             }
 
-            if isSent {
-                ActionRowLabel(row: row, status: .sent)
-            } else if isSplit {
-                Button(action: showSplit) {
+            if row.isSendable {
+                CardNavigationLink(destination: destination) {
                     ActionRowLabel(
                         row: row,
                         status: categoryRequired ? .categoryRequired : .none
                     )
                 }
-                .buttonStyle(.plain)
-                .accessibilityHint("Opens the ranked split candidates")
-            } else if row.isSendable && !categoryRequired {
-                NavigationLink(destination: destination) {
-                    ActionRowLabel(row: row, status: .none)
-                }
-                .accessibilityHint("Opens payee and category details")
+                .accessibilityLabel("View details for \(row.title)")
+                .accessibilityHint("Opens transaction details")
             } else {
-                ActionRowLabel(
-                    row: row,
-                    status: categoryRequired ? .categoryRequired : .none
-                )
+                ActionRowLabel(row: row, status: .none)
             }
 
-            if categoryRequired && !locked {
+            if row.isSendable && !locked {
                 HStack(spacing: 0) {
                     Divider()
-                    CategorySelectionLink(model: model, row: row)
+
+                    if categoryRequired {
+                        CategorySelectionLink(model: model, row: row)
+                    } else {
+                        DetailsChevronLink(
+                            title: row.title,
+                            destination: destination
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+private struct CardNavigationLink<Destination: View, Label: View>: View {
+    @ViewBuilder let destination: () -> Destination
+    @ViewBuilder let label: () -> Label
+    @State private var isPresented = false
+
+    var body: some View {
+        Button {
+            isPresented = true
+        } label: {
+            label()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .navigationDestination(isPresented: $isPresented) {
+            destination()
+        }
+    }
+}
+
+private struct DetailsChevronLink<Destination: View>: View {
+    let title: String
+    @ViewBuilder let destination: () -> Destination
+    @State private var isPresented = false
+
+    var body: some View {
+        Button {
+            isPresented = true
+        } label: {
+            Image(systemName: "chevron.right")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .frame(minWidth: 52, maxWidth: 52, minHeight: 44, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .clipped()
+        .accessibilityLabel("View details for \(title)")
+        .accessibilityHint("Opens transaction details")
+        .navigationDestination(isPresented: $isPresented) {
+            destination()
         }
     }
 }
@@ -656,29 +708,27 @@ private struct ActionRowContainer<Destination: View>: View {
 private struct CategorySelectionLink: View {
     let model: ReconcileViewModel
     let row: ActionRow
+    @State private var isPresented = false
 
     var body: some View {
-        ZStack {
-            NavigationLink {
-                CategoryPickerView(model: model, row: row)
-            } label: {
-                Color.clear
-                    .contentShape(Rectangle())
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .opacity(0.01)
-            .accessibilityLabel("Choose a category for \(row.title)")
-            .accessibilityHint("Opens the YNAB category list")
-
+        Button {
+            isPresented = true
+        } label: {
             Image(systemName: "chevron.right")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(.orange)
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .frame(minWidth: 52, maxWidth: 52, minHeight: 44, maxHeight: .infinity)
         .contentShape(Rectangle())
         .clipped()
+        .accessibilityLabel("Choose a category for \(row.title)")
+        .accessibilityHint("Opens the YNAB category list")
+        .navigationDestination(isPresented: $isPresented) {
+            CategoryPickerView(model: model, row: row)
+        }
     }
 }
 
@@ -722,7 +772,10 @@ private struct ActionRowLabel: View {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(row.title)
                     .font(.body)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .multilineTextAlignment(.leading)
+                    .layoutPriority(1)
                 Spacer()
                 Text(verbatim: "$\(Money(cents: row.balanceEffectCents).formatted)")
                     .font(.body.monospacedDigit())
@@ -731,6 +784,8 @@ private struct ActionRowLabel: View {
             Text(row.detail)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
                 .multilineTextAlignment(.leading)
             HStack(alignment: .lastTextBaseline) {
                 Text(row.date.description)

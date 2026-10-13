@@ -24,6 +24,17 @@ struct RowDetailView: View {
                 }
             }
 
+            if row.kind == .share {
+                Section {
+                    NavigationLink {
+                        SplitPickerView(model: model, depositID: row.id)
+                    } label: {
+                        Label("Review split match", systemImage: "arrow.triangle.branch")
+                    }
+                    .accessibilityHint("Opens the ranked split candidates")
+                }
+            }
+
             Section("Payee") {
                 TextField("Payee name", text: $payee)
                     .textContentType(.organizationName)

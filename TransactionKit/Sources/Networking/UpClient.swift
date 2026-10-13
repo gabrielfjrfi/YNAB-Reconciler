@@ -2,6 +2,7 @@ import Foundation
 import TransactionKit
 
 public protocol UpClientProtocol: Sendable {
+    func fetchBalanceCents(accountID: String?) async throws -> Int
     func fetchTransactions(
         since: LocalDate,
         timeZone: TimeZone,
@@ -36,6 +37,27 @@ public struct UpClient: UpClientProtocol, Sendable {
         self.httpClient = httpClient
         self.baseURL = baseURL
         self.cache = cache
+    }
+
+    public func fetchBalanceCents(accountID: String? = nil) async throws -> Int {
+        let path = accountID.map { "accounts/\($0)" } ?? "accounts"
+        let data = try await httpClient.execute(
+            .authenticated(url: baseURL.appending(path: path), token: token)
+        )
+
+        do {
+            if accountID != nil {
+                let response = try JSONDecoder().decode(AccountResponse.self, from: data)
+                return response.data.attributes.balance.valueInBaseUnits
+            }
+
+            let response = try JSONDecoder().decode(AccountsResponse.self, from: data)
+            return response.data.reduce(0) {
+                $0 + $1.attributes.balance.valueInBaseUnits
+            }
+        } catch {
+            throw NetworkError.decodingFailure
+        }
     }
 
     public func fetchTransactions(
@@ -114,6 +136,26 @@ public struct UpClient: UpClientProtocol, Sendable {
         let hours = magnitude / 3_600
         let minutes = magnitude % 3_600 / 60
         return "\(date.description)T00:00:00\(sign)\(String(format: "%02d:%02d", hours, minutes))"
+    }
+
+    private struct AccountResponse: Decodable {
+        let data: Account
+    }
+
+    private struct AccountsResponse: Decodable {
+        let data: [Account]
+    }
+
+    private struct Account: Decodable {
+        let attributes: Attributes
+
+        struct Attributes: Decodable {
+            let balance: Balance
+        }
+
+        struct Balance: Decodable {
+            let valueInBaseUnits: Int
+        }
     }
 
     private struct Page: Decodable {

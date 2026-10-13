@@ -5,6 +5,63 @@ import TransactionKit
 
 @Suite("Networking", .serialized)
 struct NetworkingTests {
+    @Test("Up retrieves a selected account balance in base units")
+    func upSelectedAccountBalance() async throws {
+        let response = Data(
+            #"{"data":{"attributes":{"balance":{"valueInBaseUnits":12536}}}}"#.utf8
+        )
+        FakeURLProtocol.configure { _, _ in .init(status: 200, data: response) }
+        let client = UpClient(
+            token: "secret",
+            httpClient: testHTTPClient(),
+            baseURL: URL(string: "https://up.test")!
+        )
+
+        let balance = try await client.fetchBalanceCents(accountID: "account-id")
+
+        #expect(balance == 12_536)
+        #expect(FakeURLProtocol.requests().first?.url?.path == "/accounts/account-id")
+    }
+
+    @Test("Up sums all account balances when no account is selected")
+    func upAllAccountBalances() async throws {
+        let response = Data(
+            #"{"data":[{"attributes":{"balance":{"valueInBaseUnits":12536}}},{"attributes":{"balance":{"valueInBaseUnits":-400}}}]}"#.utf8
+        )
+        FakeURLProtocol.configure { _, _ in .init(status: 200, data: response) }
+        let client = UpClient(
+            token: "secret",
+            httpClient: testHTTPClient(),
+            baseURL: URL(string: "https://up.test")!
+        )
+
+        let balance = try await client.fetchBalanceCents(accountID: nil)
+
+        #expect(balance == 12_136)
+        #expect(FakeURLProtocol.requests().first?.url?.path == "/accounts")
+    }
+
+    @Test("YNAB retrieves the account balance and converts milliunits to cents")
+    func ynabAccountBalance() async throws {
+        let response = Data(
+            #"{"data":{"account":{"balance":-6211640,"cleared_balance":0,"uncleared_balance":0}}}"#.utf8
+        )
+        FakeURLProtocol.configure { _, _ in .init(status: 200, data: response) }
+        let client = YNABClient(
+            token: "secret",
+            httpClient: testHTTPClient(),
+            baseURL: URL(string: "https://ynab.test/v1")!
+        )
+
+        let balance = try await client.fetchBalanceCents(
+            planID: "plan-id",
+            accountID: "account-id"
+        )
+
+        #expect(balance == -621_164)
+        #expect(FakeURLProtocol.requests().first?.url?.path == "/v1/plans/plan-id/accounts/account-id")
+    }
+
     @Test("Up follows pagination and de-duplicates repeated IDs")
     func paginationAndDeduplication() async throws {
         let fixture = try jsonObject(named: "up")

@@ -2,6 +2,7 @@ import Foundation
 import TransactionKit
 
 public protocol YNABClientProtocol: Sendable {
+    func fetchBalanceCents(planID: String, accountID: String) async throws -> Int
     func fetchTransactions(planID: String, accountID: String, since: LocalDate) async throws -> [YNABTransaction]
     func fetchCategories(planID: String) async throws -> [YNABCategoryGroup]
     func fetchPayees(planID: String) async throws -> [String]
@@ -46,6 +47,18 @@ public struct YNABClient: YNABClientProtocol, Sendable {
         self.httpClient = httpClient
         self.baseURL = baseURL
         self.cache = cache
+    }
+
+    public func fetchBalanceCents(planID: String, accountID: String) async throws -> Int {
+        let data = try await fetchWithPlanFallback(
+            planID: planID,
+            suffix: "accounts/\(accountID)"
+        )
+        let response: AccountResponse = try decode(data)
+        return Money.fromYNAB(
+            milliunits: response.data.account.balance,
+            transactionID: "account:\(accountID)"
+        ).money.cents
     }
 
     public func fetchTransactions(
@@ -165,6 +178,18 @@ public struct YNABClient: YNABClientProtocol, Sendable {
         } catch {
             throw NetworkError.decodingFailure
         }
+    }
+}
+
+private struct AccountResponse: Decodable {
+    let data: DataContainer
+
+    struct DataContainer: Decodable {
+        let account: Account
+    }
+
+    struct Account: Decodable {
+        let balance: Int
     }
 }
 
