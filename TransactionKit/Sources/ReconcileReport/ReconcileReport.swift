@@ -71,9 +71,8 @@ struct ReconcileReport {
                 accountID: accountID,
                 since: start
             )
-            let fetched = try await (fetchedUp, fetchedYNAB)
-            up = fetched.0
-            ynab = fetched.1
+            do { up = try await fetchedUp } catch { failFetch("Up", token: upToken, error) }
+            do { ynab = try await fetchedYNAB } catch { failFetch("YNAB", token: ynabToken, error) }
 
             // Keep the raw responses so later runs can replay the exact same
             // data offline after the engine changes.
@@ -108,6 +107,29 @@ struct ReconcileReport {
     }
 
     // MARK: Helpers
+
+    /// Turns a bare network error into one that names the service at fault,
+    /// with a token hint that never reveals the token itself.
+    static func failFetch(_ service: String, token: String, _ error: Error) -> Never {
+        switch error {
+        case NetworkError.invalidToken:
+            // Up tokens share a fixed "up:yeah:" prefix, so showing it is safe;
+            // nothing of a YNAB token is shown beyond its length.
+            let shape = service == "Up"
+                ? "is \(token.count) characters long and starts with \"\(token.prefix(7))…\" (Up tokens start with \"up:yeah:\")"
+                : "is \(token.count) characters long (YNAB tokens are 43)"
+            fail("""
+            \(service) rejected the token (HTTP 401/403).
+              The token read from your keychain \(shape).
+              If you revoked it, store the new one with:
+                security add-generic-password -U -s ynab-reconciler -a \(service.lowercased())-token -w
+            """)
+        case NetworkError.wrongPlanOrAccount:
+            fail("\(service) could not find the plan or account. Check YNAB_PLAN_ID and YNAB_ACCOUNT_ID in .env.")
+        default:
+            fail("\(service) request failed: \(error)")
+        }
+    }
 
     static func argument(_ name: String) -> String? {
         let args = CommandLine.arguments
