@@ -30,7 +30,7 @@ struct ReconcileView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    if model.hasPendingTransactions {
+                    if model.hasRowsNeedingAction {
                         Section {
                             SendSelectionSummaryView(
                                 selectedCount: model.selectedSendCount

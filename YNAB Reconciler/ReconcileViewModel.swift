@@ -345,7 +345,7 @@ final class ReconcileViewModel {
         selectedRowIDs.count
     }
 
-    var hasPendingTransactions: Bool {
+    var hasRowsNeedingAction: Bool {
         actionGroups.contains { group in
             group.id != .sent && !group.rows.isEmpty
         }
