@@ -1,4 +1,4 @@
-# 001b — Caption to the bottom, trim Settings text, remove Pending badge
+# 001b — Caption to the bottom, trim Settings text, remove Pending badge and Reconciled card
 
 Follow-up to [001](001-default-start-date.md), after testing on the phone.
 
@@ -9,6 +9,9 @@ Follow-up to [001](001-default-start-date.md), after testing on the phone.
 2. Settings loses the explanatory footer line added in 001.
 3. The **Pending** badge is removed everywhere. The user doesn't need to see
    which Up transactions are still held.
+4. The **Reconciled** card (the collapsed audit trail of matched, shared,
+   refunded and repaid transactions) is removed completely. The main screen
+   shows only what needs action, plus the existing **Sent** section.
 
 ## Why
 
@@ -26,8 +29,8 @@ App target only. Files expected to change: `ReconcileView.swift`,
 ### 1. Caption placement — `ReconcileView.swift`
 
 - **With a reconciliation:** remove `StartDateCaption` from above
-  `BalanceSummaryView`. Show it as the **last** item in the list, after
-  `ReconciledSection`.
+  `BalanceSummaryView`. Show it as the **last** item in the list, after the
+  last action group (and after the Sent section, when shown).
 - **Empty state ("Ready to reconcile"):** show it **below** the "Ready to
   reconcile" card, not above it.
 - Keep the caption's styling from 001 (footnote, secondary, centred, clear row
@@ -68,10 +71,24 @@ App target only. Files expected to change: `ReconcileView.swift`,
     the cleared status sent to YNAB for held transactions;
   - every use of `status == "HELD"` that feeds sending (`heldStatus`).
 
+### 4. Remove the Reconciled card
+
+- `ReconcileView.swift`: remove `ReconciledSection` from the list, and delete
+  `ReconciledSection`, `ReconciledGroupHeader`, `ReconciledRowLabel` and the
+  two `"Reconciled · Expanded"` previews.
+- `ReconcileViewModel.swift`: delete `ReconciledRow`, `ReconciledGroup`, the
+  `reconciledGroups` property and its helpers `matchedRow`, `splitRow` and
+  `zeroNetRow`. Remove anything else that becomes unused as a result (check for
+  warnings), but nothing used elsewhere.
+- **Keep:** the **Sent** section, all action groups, and the engine's
+  `matched`, `splitsInYNAB`, `reversals` and `repaid` results (the command-line
+  report still prints them).
+
 ## Must not change
 
 - The start-date behaviour in `ReconcileViewModel.swift` from 001 is correct.
-  Only the `isPending` lines and `startDateCaption` may change in that file.
+  In that file, only the `isPending` lines, `startDateCaption` and the
+  Reconciled code listed in section 4 may change.
 - Anything under `TransactionKit/`, `scripts/`, `Fixtures/`.
 
 ## Acceptance criteria
@@ -87,12 +104,14 @@ App target only. Files expected to change: `ReconcileView.swift`,
    this month" button still appears after changing the date, and only then.
 5. No row, in the list or in its detail screen, shows a Pending badge. A held
    transaction looks like any other row and can still be sent.
-6. A search of `YNAB Reconciler/` for `PendingBadge` and `isPending` finds
-   nothing.
+6. A search of `YNAB Reconciler/` for `PendingBadge`, `isPending`,
+   `ReconciledSection` and `reconciledGroups` finds nothing.
+7. After a refresh, no "Reconciled" card appears anywhere. The Sent section
+   still appears once something has been sent.
 
 ## Tests
 
 - Build `YNAB Reconciler` for an iPhone simulator: no new warnings.
 - `swift test --package-path TransactionKit`: all pass.
-- Manual: acceptance criteria 1–6 in the simulator, including the largest
+- Manual: acceptance criteria 1–7 in the simulator, including the largest
   Dynamic Type size for criterion 2.
