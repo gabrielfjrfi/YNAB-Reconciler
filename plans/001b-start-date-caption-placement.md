@@ -35,8 +35,10 @@ App target only. Files expected to change: `ReconcileView.swift`,
   height, e.g. `.listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))`.
 - When scrolled to the very bottom, the caption must be fully visible above
   the floating tab bar, not hidden behind it.
-- Keep the caption text unchanged, including the
-  `· custom until you close the app` suffix when the date is custom.
+- The caption always reads `Reconciling from <date>`. Remove the
+  `· custom until you close the app` suffix: in `ReconcileViewModel.swift`,
+  `startDateCaption` returns the same text whether or not the date is custom.
+  Keep `isStartDateCustom`, which the Settings button still uses.
 
 ### 2. Settings footer — `SettingsView.swift`
 
@@ -69,7 +71,7 @@ App target only. Files expected to change: `ReconcileView.swift`,
 ## Must not change
 
 - The start-date behaviour in `ReconcileViewModel.swift` from 001 is correct.
-  Only the `isPending` lines may change in that file.
+  Only the `isPending` lines and `startDateCaption` may change in that file.
 - Anything under `TransactionKit/`, `scripts/`, `Fixtures/`.
 
 ## Acceptance criteria
@@ -77,7 +79,8 @@ App target only. Files expected to change: `ReconcileView.swift`,
 1. After a refresh, the balance card is the first thing under the navigation
    title, with no caption row above it.
 2. Scrolled to the bottom, the caption is the last line, readable and fully
-   above the tab bar.
+   above the tab bar. After picking a custom date in Settings it shows that
+   date with no suffix.
 3. Before the first refresh, the caption appears under the "Ready to
    reconcile" card.
 4. The Settings Accounts footer shows only the original line. The "Use 1st of
