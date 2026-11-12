@@ -284,6 +284,8 @@ final class ReconcileViewModel {
     var sendResultMessage: String?
     var lastRefreshHadNoDiscrepancies = false
 
+    /// The 1st of the month the model last applied automatically.
+    private var automaticStartDate: Date
     private var upTransactions: [UpTransaction] = []
     private var ynabTransactions: [YNABTransaction] = []
     private var splitDecisions: [String: SplitDecision] = [:]
@@ -306,7 +308,11 @@ final class ReconcileViewModel {
         accountSettings = AccountSettingsStore(defaults: defaults)
         self.fixtureRefresh = fixtureRefresh
         self.pushedLogStorage = pushedLogStorage ?? ((try? DiskPushedLogStorage()) ?? MemoryPushedLogStorage())
-        settings = Self.loadSettings(defaults: defaults, accountSettings: accountSettings)
+        // The start date is per-session; drop any value saved by older versions.
+        defaults.removeObject(forKey: DefaultsKey.startDate)
+        let loaded = Self.loadSettings(defaults: defaults, accountSettings: accountSettings)
+        settings = loaded
+        automaticStartDate = loaded.startDate
         lastRefreshDate = defaults.object(forKey: DefaultsKey.lastRefresh) as? Date
         loadTokens()
         loadPushedLog()
@@ -419,7 +425,29 @@ final class ReconcileViewModel {
             .allSatisfy(\.rows.isEmpty)
     }
 
+    /// True when the start date differs from the automatic 1st of the month.
+    var isStartDateCustom: Bool {
+        !Calendar.current.isDate(settings.startDate, inSameDayAs: automaticStartDate)
+    }
+
+    var startDateCaption: String {
+        let date = settings.startDate.formatted(.dateTime.day().month(.abbreviated).year())
+        return isStartDateCustom
+            ? "Reconciling from \(date) · custom until you close the app"
+            : "Reconciling from \(date)"
+    }
+
+    func useAutomaticStartDate() {
+        let monthStart = ReconcileSettings.defaults().startDate
+        automaticStartDate = monthStart
+        settings.startDate = monthStart
+    }
+
     func refresh() async {
+        // Roll the window forward across a month boundary, but keep a manual choice.
+        if !isStartDateCustom {
+            useAutomaticStartDate()
+        }
         if let fixtureRefresh {
             fixtureRefresh()
             return
@@ -1064,7 +1092,6 @@ final class ReconcileViewModel {
     }
 
     private func persistParameters() {
-        defaults.set(settings.startDate, forKey: DefaultsKey.startDate)
         defaults.set(settings.partnerHandles, forKey: DefaultsKey.partners)
         defaults.set(settings.tolerance, forKey: DefaultsKey.tolerance)
         defaults.set(settings.reimbursementWindow, forKey: DefaultsKey.reimbursementWindow)
@@ -1082,7 +1109,6 @@ final class ReconcileViewModel {
         accountSettings: AccountSettingsStore
     ) -> ReconcileSettings {
         var settings = ReconcileSettings.defaults()
-        settings.startDate = defaults.object(forKey: DefaultsKey.startDate) as? Date ?? settings.startDate
         settings.ynabPlanID = accountSettings.ynabPlanID ?? ""
         settings.ynabAccountID = accountSettings.ynabAccountID ?? ""
         settings.upAccountID = accountSettings.upAccountID ?? ""

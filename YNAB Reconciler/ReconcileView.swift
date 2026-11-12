@@ -10,6 +10,7 @@ struct ReconcileView: View {
             List {
                 Group {
                     if let reconciliation = model.reconciliation {
+                    StartDateCaption(text: model.startDateCaption)
                     Section {
                         BalanceSummaryView(
                             totals: reconciliation.totals,
@@ -58,6 +59,7 @@ struct ReconcileView: View {
                     }
                     ReconciledSection(groups: model.reconciledGroups)
                     } else {
+                        StartDateCaption(text: model.startDateCaption)
                         VStack(spacing: 8) {
                             Text("Ready to reconcile")
                                 .font(.title2)
@@ -129,6 +131,22 @@ struct ReconcileView: View {
                 ReviewSheet(model: model, review: review)
             }
         }
+    }
+}
+
+/// The subtle first row showing which start date the reconciliation uses.
+private struct StartDateCaption: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .multilineTextAlignment(.center)
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .accessibilityLabel(text)
     }
 }
 

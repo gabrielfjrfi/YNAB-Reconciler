@@ -79,10 +79,15 @@ struct SettingsView: View {
                         displayedComponents: .date
                     )
                     .accessibilityLabel("Start date")
+                    if model.isStartDateCustom {
+                        Button("Use 1st of this month") {
+                            model.useAutomaticStartDate()
+                        }
+                    }
                 } header: {
                     Text("Accounts")
                 } footer: {
-                    Text("Plan and account IDs are not secret and are stored in app settings.")
+                    Text("Plan and account IDs are not secret and are stored in app settings.\nDefaults to the 1st of this month. A change applies until you close the app.")
                 }
 
                 Section {
