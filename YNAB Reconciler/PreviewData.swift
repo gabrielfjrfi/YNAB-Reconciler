@@ -86,7 +86,6 @@ extension ActionRow {
             date: try! LocalDate(isoDate: "2026-09-13"),
             balanceEffectCents: 3_000,
             isSendable: false,
-            isPending: true,
             ynabEntry: YNABEntry(
                 date: try! LocalDate(isoDate: "2026-09-13"),
                 payee: "Bistro",

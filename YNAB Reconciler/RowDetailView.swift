@@ -31,7 +31,6 @@ struct RowDetailView: View {
             Group {
                 Section("YNAB entry") {
                     ynabEntryRows
-                    pendingRow
                 }
 
                 if let amend = row.amend {
@@ -121,15 +120,6 @@ struct RowDetailView: View {
         }
     }
 
-    @ViewBuilder
-    private var pendingRow: some View {
-        if row.isPending {
-            LabeledContent("Up status") {
-                PendingBadge()
-            }
-        }
-    }
-
     private func causeDescription(_ amend: AmendDetail) -> String {
         switch amend.cause {
         case .typo:
@@ -152,7 +142,6 @@ struct RowDetailView: View {
                 LabeledContent("Amount") {
                     Text(verbatim: "$\(Money(cents: row.balanceEffectCents).formatted)")
                 }
-                pendingRow
             }
 
             if row.kind == .share {
@@ -297,10 +286,9 @@ struct CategoryPickerView: View {
     }
 }
 
-#Preview("Row detail · Pending add") {
+#Preview("Row detail · Add") {
     let model = ReconcileViewModel.fixturePreview()
-    let row = model.actionGroups.flatMap(\.rows).first { $0.kind == .add && $0.isPending }
-        ?? model.actionGroups.first(where: { $0.id == .add })!.rows.first!
+    let row = model.actionGroups.first(where: { $0.id == .add })!.rows.first!
     NavigationStack {
         RowDetailView(model: model, row: row)
     }

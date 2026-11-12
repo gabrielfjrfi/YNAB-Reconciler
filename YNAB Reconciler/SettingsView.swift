@@ -87,7 +87,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Accounts")
                 } footer: {
-                    Text("Plan and account IDs are not secret and are stored in app settings.\nDefaults to the 1st of this month. A change applies until you close the app.")
+                    Text("Plan and account IDs are not secret and are stored in app settings.")
                 }
 
                 Section {
