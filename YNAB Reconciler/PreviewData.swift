@@ -47,6 +47,61 @@ extension ReconcileViewModel {
     }
 }
 
+extension ActionRow {
+    /// The edge fixture only contains a typo correction; these cover the other two causes.
+    static func settledDifferentlyPreview() -> ActionRow {
+        ActionRow(
+            id: "preview-settled",
+            kind: .amend,
+            title: "Fuel Stop",
+            detail: AmendCause.settledDifferently(heldCents: -1_200).shortLabel,
+            date: try! LocalDate(isoDate: "2026-09-12"),
+            balanceEffectCents: -250,
+            isSendable: false,
+            ynabEntry: YNABEntry(
+                date: try! LocalDate(isoDate: "2026-09-11"),
+                payee: "Fuel",
+                category: "Transport",
+                cents: -1_200
+            ),
+            amend: AmendDetail(
+                cause: .settledDifferently(heldCents: -1_200),
+                correctedCents: -1_450,
+                differenceCents: -250
+            )
+        )
+    }
+
+    static func repaidHalfPreview() -> ActionRow {
+        let repayment = RepaymentInfo(
+            date: try! LocalDate(isoDate: "2026-09-15"),
+            description: "$partner_handle",
+            cents: 3_000
+        )
+        return ActionRow(
+            id: "preview-repaid-half",
+            kind: .amend,
+            title: "Corner Bistro",
+            detail: AmendCause.repaidHalf(repayment).shortLabel,
+            date: try! LocalDate(isoDate: "2026-09-13"),
+            balanceEffectCents: 3_000,
+            isSendable: false,
+            isPending: true,
+            ynabEntry: YNABEntry(
+                date: try! LocalDate(isoDate: "2026-09-13"),
+                payee: "Bistro",
+                category: "Eating Out",
+                cents: -6_000
+            ),
+            amend: AmendDetail(
+                cause: .repaidHalf(repayment),
+                correctedCents: -3_000,
+                differenceCents: 3_000
+            )
+        )
+    }
+}
+
 extension SendReview {
     static func fixturePreview() -> SendReview {
         let transaction = YNABCreateTransaction(

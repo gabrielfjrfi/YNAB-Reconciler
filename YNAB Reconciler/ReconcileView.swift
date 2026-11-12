@@ -56,6 +56,7 @@ struct ReconcileView: View {
                             }
                         }
                     }
+                    ReconciledSection(groups: model.reconciledGroups)
                     } else {
                         VStack(spacing: 8) {
                             Text("Ready to reconcile")
@@ -560,6 +561,174 @@ private struct SentHistoryRow: View {
     }
 }
 
+/// The read-only audit trail below the action groups. Collapsed until tapped,
+/// and each sub-group is collapsed too because "Matched" can run to hundreds of lines.
+private struct ReconciledSection: View {
+    let groups: [ReconciledGroup]
+    @State private var isExpanded: Bool
+    @State private var expandedGroups: Set<ReconciledGroup.ID>
+
+    init(groups: [ReconciledGroup], startsExpanded: Bool = false) {
+        self.groups = groups
+        _isExpanded = State(initialValue: startsExpanded)
+        _expandedGroups = State(initialValue: startsExpanded ? Set(ReconciledGroup.ID.allCases) : [])
+    }
+
+    private var totalCount: Int {
+        groups.reduce(0) { $0 + $1.rows.count }
+    }
+
+    private var summary: String {
+        groups.map { "\($0.title) \($0.rows.count)" }.joined(separator: ", ")
+    }
+
+    var body: some View {
+        if totalCount > 0 {
+            Section {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isExpanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "checklist")
+                            .font(.title2)
+                            .foregroundStyle(AppTheme.accent)
+                            .accessibilityHidden(true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Reconciled")
+                                .font(.headline)
+                            Text("\(totalCount) already accounted for")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                            .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                            .accessibilityHidden(true)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Reconciled, \(summary)")
+                .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+                .accessibilityHint(isExpanded ? "Collapses the reconciled transactions" : "Shows the reconciled transactions")
+
+                if isExpanded {
+                    ForEach(groups) { group in
+                        ReconciledGroupHeader(
+                            group: group,
+                            isExpanded: expandedGroups.contains(group.id)
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if expandedGroups.contains(group.id) {
+                                    expandedGroups.remove(group.id)
+                                } else {
+                                    expandedGroups.insert(group.id)
+                                }
+                            }
+                        }
+                        if expandedGroups.contains(group.id) {
+                            ForEach(group.rows) { row in
+                                ReconciledRowLabel(row: row)
+                            }
+                        }
+                    }
+                }
+            }
+            .listRowBackground(AppTheme.card.opacity(isExpanded ? 0.78 : 0.58))
+            .listRowSeparatorTint(.white.opacity(0.12))
+        }
+    }
+}
+
+private struct ReconciledGroupHeader: View {
+    let group: ReconciledGroup
+    let isExpanded: Bool
+    let toggle: () -> Void
+
+    var body: some View {
+        Button(action: toggle) {
+            HStack(spacing: 8) {
+                Text(group.title)
+                    .font(.subheadline.weight(.semibold))
+                    .multilineTextAlignment(.leading)
+                Text("\(group.rows.count)")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    .opacity(group.rows.isEmpty ? 0.3 : 1)
+                    .accessibilityHidden(true)
+            }
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(group.rows.isEmpty)
+        .accessibilityLabel("\(group.title), \(group.rows.count)")
+        .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+        .accessibilityHint(isExpanded ? "Hides these transactions" : "Shows these transactions")
+        .accessibilityAddTraits(.isHeader)
+    }
+}
+
+private struct ReconciledRowLabel: View {
+    let row: ReconciledRow
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(row.title)
+                    .font(.body)
+                    .multilineTextAlignment(.leading)
+                    .layoutPriority(1)
+                Spacer()
+                Text(verbatim: Money(cents: row.cents).dollars)
+                    .font(.body.monospacedDigit())
+                    .fixedSize(horizontal: true, vertical: false)
+            }
+            ForEach(row.parts) { part in
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Text("\(part.label) · \(part.description) · \(part.date.description)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .layoutPriority(1)
+                    Spacer()
+                    Text(verbatim: Money(cents: part.cents).dollars)
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
+            }
+            Text(row.date.description)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityValue(Money(cents: row.cents).dollars)
+    }
+
+    private var accessibilityLabel: String {
+        let parts = row.parts.map {
+            "\($0.label), \($0.description), \(Money(cents: $0.cents).dollars), \($0.date.description)"
+        }
+        return ([row.title, row.date.description] + parts).joined(separator: ", ")
+    }
+}
+
 private struct ActionGroupSection<Destination: View>: View {
     let group: ActionGroup
     let model: ReconcileViewModel
@@ -620,6 +789,8 @@ private struct ActionRowContainer<Destination: View>: View {
     var body: some View {
         let locked = model.isLocked(row)
         let categoryRequired = row.isSendable && model.draft(for: row).categoryID == nil
+        // Corrections and queries can't be sent, but their detail screen explains what to do in YNAB.
+        let readOnlyDetail = row.kind == .amend || row.kind == .query
 
         HStack(alignment: .top, spacing: 12) {
             if row.isSendable && !locked {
@@ -627,7 +798,7 @@ private struct ActionRowContainer<Destination: View>: View {
                     .padding(.top, 2)
             }
 
-            if row.isSendable {
+            if row.isSendable || readOnlyDetail {
                 CardNavigationLink(destination: destination) {
                     ActionRowLabel(
                         row: row,
@@ -652,6 +823,14 @@ private struct ActionRowContainer<Destination: View>: View {
                             destination: destination
                         )
                     }
+                }
+            } else if readOnlyDetail {
+                HStack(spacing: 0) {
+                    Divider()
+                    DetailsChevronLink(
+                        title: row.title,
+                        destination: destination
+                    )
                 }
             }
         }
@@ -791,6 +970,9 @@ private struct ActionRowLabel: View {
                 Text(row.date.description)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if row.isPending {
+                    PendingBadge()
+                }
                 Spacer()
                 switch status {
                 case .none:
@@ -811,7 +993,9 @@ private struct ActionRowLabel: View {
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(row.title), \(row.detail), \(row.date.description)")
+        .accessibilityLabel(
+            "\(row.title), \(row.detail), \(row.date.description)\(row.isPending ? ", pending in Up" : "")"
+        )
         .accessibilityValue("$\(Money(cents: row.balanceEffectCents).formatted)")
     }
 }
@@ -824,6 +1008,21 @@ private struct ActionRowLabel: View {
 #Preview("Reconcile · Dark") {
     ReconcileView(model: .fixturePreview())
         .preferredColorScheme(.dark)
+}
+
+#Preview("Reconciled · Expanded") {
+    List {
+        ReconciledSection(groups: ReconcileViewModel.fixturePreview().reconciledGroups, startsExpanded: true)
+    }
+    .appListSurface()
+}
+
+#Preview("Reconciled · Expanded · AX5") {
+    List {
+        ReconciledSection(groups: ReconcileViewModel.fixturePreview().reconciledGroups, startsExpanded: true)
+    }
+    .appListSurface()
+    .environment(\.dynamicTypeSize, .accessibility5)
 }
 
 #Preview("Reconcile · AX5") {

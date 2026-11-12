@@ -33,6 +33,23 @@ struct AppGradientBackground: View {
     }
 }
 
+/// The single badge for any row whose Up transaction is still HELD.
+struct PendingBadge: View {
+    var body: some View {
+        Text("Pending")
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(AppTheme.standout)
+            .fixedSize(horizontal: true, vertical: false)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
+            .background(AppTheme.standout.opacity(0.18), in: Capsule())
+            .overlay {
+                Capsule().stroke(AppTheme.standout.opacity(0.6), lineWidth: 1)
+            }
+            .accessibilityLabel("Pending in Up")
+    }
+}
+
 private struct AppListSurfaceModifier: ViewModifier {
     func body(content: Content) -> some View {
         content

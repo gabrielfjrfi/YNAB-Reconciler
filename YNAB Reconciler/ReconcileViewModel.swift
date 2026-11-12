@@ -65,6 +65,54 @@ struct AccountBalances: Equatable, Sendable {
     }
 }
 
+extension Money {
+    /// The amount as the app writes it everywhere: `$` followed by the engine's formatting.
+    var dollars: String {
+        "$\(formatted)"
+    }
+}
+
+/// A YNAB entry as shown on a detail screen; every field comes from the YNAB transaction.
+struct YNABEntry: Equatable {
+    let date: LocalDate
+    let payee: String
+    let category: String?
+    /// What YNAB holds now, as reported by the engine.
+    let cents: Int
+}
+
+/// The Up repayment behind a "Repaid half" correction.
+struct RepaymentInfo: Equatable {
+    let date: LocalDate
+    let description: String
+    let cents: Int
+}
+
+/// Why the engine proposed an amount correction.
+enum AmendCause: Equatable {
+    /// YNAB is within the amend tolerance of Up's amount.
+    case typo
+    /// The Up transaction was held when it was entered, then settled for another amount.
+    case settledDifferently(heldCents: Int)
+    /// A partner repaid half of a bill that YNAB holds at full price.
+    case repaidHalf(RepaymentInfo)
+
+    var shortLabel: String {
+        switch self {
+        case .typo: "Probably a typo"
+        case .settledDifferently: "Settled differently"
+        case .repaidHalf: "Partner repaid half"
+        }
+    }
+}
+
+struct AmendDetail: Equatable {
+    let cause: AmendCause
+    /// What YNAB should hold, per Up.
+    let correctedCents: Int
+    let differenceCents: Int
+}
+
 struct ActionRow: Identifiable, Equatable {
     enum Kind: Equatable {
         case add
@@ -80,6 +128,44 @@ struct ActionRow: Identifiable, Equatable {
     let date: LocalDate
     let balanceEffectCents: Int
     let isSendable: Bool
+    /// True when the Up transaction behind the row is still HELD.
+    var isPending = false
+    /// The YNAB entry, for `.amend` and `.query` rows.
+    var ynabEntry: YNABEntry?
+    /// The current and corrected amounts and the cause, for `.amend` rows.
+    var amend: AmendDetail?
+}
+
+/// One read-only line in the Reconciled audit trail.
+struct ReconciledRow: Identifiable, Equatable {
+    struct Part: Equatable, Identifiable {
+        let label: String
+        let description: String
+        let cents: Int
+        let date: LocalDate
+
+        var id: String { label }
+    }
+
+    let id: String
+    let title: String
+    let cents: Int
+    let date: LocalDate
+    /// The other transactions behind the line (repayment, refund, YNAB share).
+    let parts: [Part]
+}
+
+struct ReconciledGroup: Identifiable, Equatable {
+    enum ID: String, CaseIterable {
+        case matched
+        case splits
+        case reversals
+        case repaid
+    }
+
+    let id: ID
+    let title: String
+    let rows: [ReconciledRow]
 }
 
 struct ActionGroup: Identifiable, Equatable {
@@ -279,6 +365,33 @@ final class ReconcileViewModel {
                 explanation: "Transactions already sent to YNAB.",
                 rows: sentRows,
                 subtotalCents: sentRows.reduce(0) { $0 + $1.balanceEffectCents }
+            )
+        ]
+    }
+
+    /// The read-only audit trail: everything the engine reconciled without an action.
+    var reconciledGroups: [ReconciledGroup] {
+        guard let reconciliation else { return [] }
+        return [
+            ReconciledGroup(
+                id: .matched,
+                title: "Matched",
+                rows: reconciliation.matched.compactMap(matchedRow)
+            ),
+            ReconciledGroup(
+                id: .splits,
+                title: "Shared costs already in YNAB",
+                rows: reconciliation.splitsInYNAB.compactMap(splitRow)
+            ),
+            ReconciledGroup(
+                id: .reversals,
+                title: "Refunds (reversals)",
+                rows: reconciliation.reversals.compactMap { zeroNetRow($0, creditLabel: "Refund") }
+            ),
+            ReconciledGroup(
+                id: .repaid,
+                title: "Repaid in full",
+                rows: reconciliation.repaid.compactMap { zeroNetRow($0, creditLabel: "Repayment") }
             )
         ]
     }
@@ -796,10 +909,11 @@ final class ReconcileViewModel {
             id: action.upID,
             kind: .add,
             title: transaction.description,
-            detail: action.status == "HELD" ? "Pending in Up" : "Ready to enter",
+            detail: "Ready to enter",
             date: action.date,
             balanceEffectCents: action.cents,
-            isSendable: true
+            isSendable: true,
+            isPending: action.status == "HELD"
         )
     }
 
@@ -820,22 +934,41 @@ final class ReconcileViewModel {
             detail: detail,
             date: chosen?.date ?? deposit.date,
             balanceEffectCents: block.yourShareCents ?? block.depositCents,
-            isSendable: chosen != nil
+            isSendable: chosen != nil,
+            isPending: deposit.status == "HELD" || chosen?.status == "HELD"
         )
     }
 
     private func amendRow(_ correction: AmountCorrection) -> ActionRow? {
         guard let transaction = transaction(upID: correction.upID) else { return nil }
+        let repayment = correction.repaymentID.flatMap(transaction(upID:))
+        let cause: AmendCause
+        if let repayment {
+            cause = .repaidHalf(RepaymentInfo(
+                date: repayment.date,
+                description: repayment.description,
+                cents: repayment.money.cents
+            ))
+        } else if transaction.heldCents == correction.ynabCents {
+            cause = .settledDifferently(heldCents: correction.ynabCents)
+        } else {
+            cause = .typo
+        }
         return ActionRow(
             id: correction.upID,
             kind: .amend,
             title: transaction.description,
-            detail: correction.repaymentID == nil
-                ? "YNAB differs by \(Money(cents: correction.deltaCents).formatted)"
-                : "Repaid half: change YNAB from \(Money(cents: correction.ynabCents).formatted) to \(Money(cents: correction.upCents).formatted)",
+            detail: cause.shortLabel,
             date: transaction.date,
             balanceEffectCents: correction.deltaCents,
-            isSendable: false
+            isSendable: false,
+            isPending: transaction.status == "HELD" || repayment?.status == "HELD",
+            ynabEntry: ynabEntry(id: correction.ynabID, cents: correction.ynabCents),
+            amend: AmendDetail(
+                cause: cause,
+                correctedCents: correction.upCents,
+                differenceCents: correction.deltaCents
+            )
         )
     }
 
@@ -845,10 +978,68 @@ final class ReconcileViewModel {
             id: query.ynabID,
             kind: .query,
             title: transaction.payeeName,
-            detail: "Check or remove this YNAB entry",
+            detail: "No matching Up transaction",
             date: query.date,
             balanceEffectCents: -query.cents,
-            isSendable: false
+            isSendable: false,
+            ynabEntry: ynabEntry(id: query.ynabID, cents: query.cents)
+        )
+    }
+
+    private func matchedRow(_ match: DirectMatch) -> ReconciledRow? {
+        guard let transaction = transaction(upID: match.upID) else { return nil }
+        return ReconciledRow(
+            id: match.upID,
+            title: transaction.description,
+            cents: match.cents,
+            date: transaction.date,
+            parts: []
+        )
+    }
+
+    private func splitRow(_ split: ExistingSplit) -> ReconciledRow? {
+        guard let purchase = transaction(upID: split.purchaseID),
+              let deposit = transaction(upID: split.depositID) else { return nil }
+        let ynab = ynabTransactions.first { $0.id == split.ynabID }
+        return ReconciledRow(
+            id: split.ynabID,
+            title: purchase.description,
+            cents: purchase.money.cents,
+            date: purchase.date,
+            parts: [
+                .init(label: "Bill", description: purchase.description, cents: purchase.money.cents, date: purchase.date),
+                .init(label: "Repayment", description: deposit.description, cents: deposit.money.cents, date: deposit.date),
+                .init(
+                    label: "YNAB share",
+                    description: ynab?.payeeName ?? "YNAB entry",
+                    cents: split.yourShareCents,
+                    date: ynab?.date ?? purchase.date
+                )
+            ]
+        )
+    }
+
+    private func zeroNetRow(_ pair: ZeroNetPair, creditLabel: String) -> ReconciledRow? {
+        guard let purchase = transaction(upID: pair.purchaseID),
+              let credit = transaction(upID: pair.creditID) else { return nil }
+        return ReconciledRow(
+            id: pair.purchaseID,
+            title: purchase.description,
+            cents: pair.cents,
+            date: purchase.date,
+            parts: [
+                .init(label: creditLabel, description: credit.description, cents: credit.money.cents, date: credit.date)
+            ]
+        )
+    }
+
+    private func ynabEntry(id: String, cents: Int) -> YNABEntry? {
+        guard let transaction = ynabTransactions.first(where: { $0.id == id }) else { return nil }
+        return YNABEntry(
+            date: transaction.date,
+            payee: transaction.payeeName,
+            category: transaction.categoryName,
+            cents: cents
         )
     }
 

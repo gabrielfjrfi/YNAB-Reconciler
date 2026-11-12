@@ -15,6 +15,136 @@ struct RowDetailView: View {
     }
 
     var body: some View {
+        switch row.kind {
+        case .amend:
+            amendForm
+        case .query:
+            queryForm
+        case .add, .share:
+            editorForm
+        }
+    }
+
+    /// Corrections are made by hand in YNAB, so there is nothing to edit or send here.
+    private var amendForm: some View {
+        Form {
+            Group {
+                Section("YNAB entry") {
+                    ynabEntryRows
+                    pendingRow
+                }
+
+                if let amend = row.amend {
+                    Section("Should be") {
+                        LabeledContent("Correct amount") {
+                            Text(verbatim: Money(cents: amend.correctedCents).dollars)
+                        }
+                        LabeledContent("Difference") {
+                            Text(verbatim: Money(cents: amend.differenceCents).dollars)
+                        }
+                    }
+
+                    Section("Cause") {
+                        Text(causeDescription(amend))
+                        if case let .repaidHalf(repayment) = amend.cause {
+                            LabeledContent("Repayment") {
+                                VStack(alignment: .trailing) {
+                                    Text(verbatim: Money(cents: repayment.cents).dollars)
+                                    Text("\(repayment.description) · \(repayment.date.description)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .accessibilityElement(children: .combine)
+                        }
+                    }
+
+                    Section {
+                        Label {
+                            Text("Edit this transaction in YNAB to \(Money(cents: amend.correctedCents).dollars)")
+                        } icon: {
+                            Image(systemName: "pencil")
+                                .accessibilityHidden(true)
+                        }
+                        .accessibilityElement(children: .combine)
+                    } header: {
+                        Text("What to do")
+                    } footer: {
+                        Text("There's no send button: corrections are made by hand in YNAB, and this row disappears on the next refresh once YNAB matches.")
+                    }
+                }
+            }
+            .appCardRows()
+        }
+        .appListSurface()
+        .navigationTitle("Correct the amount")
+    }
+
+    private var queryForm: some View {
+        Form {
+            Group {
+                Section("YNAB entry") {
+                    ynabEntryRows
+                }
+
+                Section {
+                    Label {
+                        Text("No matching Up transaction — check it, or delete it in YNAB")
+                    } icon: {
+                        Image(systemName: "questionmark.circle")
+                            .accessibilityHidden(true)
+                    }
+                    .accessibilityElement(children: .combine)
+                } header: {
+                    Text("What to do")
+                }
+            }
+            .appCardRows()
+        }
+        .appListSurface()
+        .navigationTitle("Check this entry")
+    }
+
+    /// Date, payee, category and current amount of the YNAB entry.
+    @ViewBuilder
+    private var ynabEntryRows: some View {
+        if let entry = row.ynabEntry {
+            LabeledContent("Date", value: entry.date.description)
+            LabeledContent("Payee", value: entry.payee.isEmpty ? "No payee" : entry.payee)
+            LabeledContent("Category", value: entry.category ?? "No category")
+            LabeledContent("Current amount") {
+                Text(verbatim: Money(cents: entry.cents).dollars)
+            }
+        } else {
+            Text("This YNAB entry is no longer available.")
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var pendingRow: some View {
+        if row.isPending {
+            LabeledContent("Up status") {
+                PendingBadge()
+            }
+        }
+    }
+
+    private func causeDescription(_ amend: AmendDetail) -> String {
+        switch amend.cause {
+        case .typo:
+            return "Probably a typo"
+        case let .settledDifferently(heldCents):
+            let held = Money(cents: heldCents).dollars
+            let settled = Money(cents: amend.correctedCents).dollars
+            return "Was pending at \(held), settled at \(settled)"
+        case let .repaidHalf(repayment):
+            let amount = Money(cents: repayment.cents).dollars
+            return "Partner repaid half (\(amount) on \(repayment.date.description) from \(repayment.description))"
+        }
+    }
+
+    private var editorForm: some View {
         Form {
             Group {
                 Section("Transaction") {
@@ -22,6 +152,7 @@ struct RowDetailView: View {
                 LabeledContent("Amount") {
                     Text(verbatim: "$\(Money(cents: row.balanceEffectCents).formatted)")
                 }
+                pendingRow
             }
 
             if row.kind == .share {
@@ -161,6 +292,51 @@ struct CategoryPickerView: View {
 #Preview("Row detail") {
     let model = ReconcileViewModel.fixturePreview()
     let row = model.actionGroups.first(where: { $0.id == .add })!.rows.first!
+    NavigationStack {
+        RowDetailView(model: model, row: row)
+    }
+}
+
+#Preview("Row detail · Pending add") {
+    let model = ReconcileViewModel.fixturePreview()
+    let row = model.actionGroups.flatMap(\.rows).first { $0.kind == .add && $0.isPending }
+        ?? model.actionGroups.first(where: { $0.id == .add })!.rows.first!
+    NavigationStack {
+        RowDetailView(model: model, row: row)
+    }
+}
+
+#Preview("Correct amount · Typo") {
+    let model = ReconcileViewModel.fixturePreview()
+    let row = model.actionGroups.first(where: { $0.id == .amend })!.rows.first!
+    NavigationStack {
+        RowDetailView(model: model, row: row)
+    }
+}
+
+#Preview("Correct amount · Settled differently") {
+    NavigationStack {
+        RowDetailView(model: .fixturePreview(), row: .settledDifferentlyPreview())
+    }
+}
+
+#Preview("Correct amount · Repaid half · Dark") {
+    NavigationStack {
+        RowDetailView(model: .fixturePreview(), row: .repaidHalfPreview())
+    }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Correct amount · Repaid half · AX5") {
+    NavigationStack {
+        RowDetailView(model: .fixturePreview(), row: .repaidHalfPreview())
+    }
+    .environment(\.dynamicTypeSize, .accessibility5)
+}
+
+#Preview("Check yourself") {
+    let model = ReconcileViewModel.fixturePreview()
+    let row = model.actionGroups.first(where: { $0.id == .query })!.rows.first!
     NavigationStack {
         RowDetailView(model: model, row: row)
     }
