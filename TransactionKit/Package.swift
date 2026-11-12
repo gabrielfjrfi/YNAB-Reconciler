@@ -10,7 +10,8 @@ let package = Package(
     ],
     products: [
         .library(name: "TransactionKit", targets: ["TransactionKit"]),
-        .library(name: "Networking", targets: ["Networking"])
+        .library(name: "Networking", targets: ["Networking"]),
+        .executable(name: "reconcile-report", targets: ["ReconcileReport"])
     ],
     targets: [
         .target(name: "TransactionKit"),
@@ -18,6 +19,10 @@ let package = Package(
             name: "Networking",
             dependencies: ["TransactionKit"],
             linkerSettings: [.linkedFramework("Security")]
+        ),
+        .executableTarget(
+            name: "ReconcileReport",
+            dependencies: ["TransactionKit", "Networking"]
         ),
         .testTarget(
             name: "TransactionKitTests",
