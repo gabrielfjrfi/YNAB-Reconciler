@@ -1,4 +1,4 @@
-# 001b — Move the start-date caption to the bottom; trim Settings text
+# 001b — Caption to the bottom, trim Settings text, remove Pending badge
 
 Follow-up to [001](001-default-start-date.md), after testing on the phone.
 
@@ -7,6 +7,8 @@ Follow-up to [001](001-default-start-date.md), after testing on the phone.
 1. The "Reconciling from …" caption sits at the **bottom** of the main list,
    not the top, so it no longer pushes the balance card down.
 2. Settings loses the explanatory footer line added in 001.
+3. The **Pending** badge is removed everywhere. The user doesn't need to see
+   which Up transactions are still held.
 
 ## Why
 
@@ -18,7 +20,8 @@ behaviour already makes obvious.
 ## Scope
 
 App target only. Files expected to change: `ReconcileView.swift`,
-`SettingsView.swift`.
+`SettingsView.swift`, `RowDetailView.swift`, `ReconcileViewModel.swift`,
+`AppTheme.swift`, `PreviewData.swift`.
 
 ### 1. Caption placement — `ReconcileView.swift`
 
@@ -44,13 +47,30 @@ App target only. Files expected to change: `ReconcileView.swift`,
 - Keep the **"Use 1st of this month"** button. It still appears only while the
   date is custom.
 
+### 3. Remove the Pending badge
+
+- Delete the `PendingBadge` view (`AppTheme.swift`) and every use of it:
+  the list row in `ReconcileView.swift` and `pendingRow` in
+  `RowDetailView.swift` (remove both places it is inserted).
+- Remove `isPending` from `ActionRow` and its three assignments in
+  `ReconcileViewModel.swift` (add, share and amend rows), plus the
+  `isPending: true` in `PreviewData.swift`.
+- Remove the `", pending in Up"` part of the row accessibility label in
+  `ReconcileView.swift`.
+- The preview `"Row detail · Pending add"` in `RowDetailView.swift`: point it
+  at any add row, and rename it `"Row detail · Add"`.
+- **Keep** these, which are not the badge:
+  - the "Was pending at $X, settled at $Y" cause text for settled-differently
+    corrections (`RowDetailView.swift`);
+  - the "Pending transactions" setting in `SettingsView.swift`, which decides
+    the cleared status sent to YNAB for held transactions;
+  - every use of `status == "HELD"` that feeds sending (`heldStatus`).
+
 ## Must not change
 
-- Anything in `ReconcileViewModel.swift`: the start-date behaviour from 001 is
-  correct.
+- The start-date behaviour in `ReconcileViewModel.swift` from 001 is correct.
+  Only the `isPending` lines may change in that file.
 - Anything under `TransactionKit/`, `scripts/`, `Fixtures/`.
-- The Pending badge logic. Showing it only on rows whose Up transaction is
-  still `HELD` is correct.
 
 ## Acceptance criteria
 
@@ -62,10 +82,14 @@ App target only. Files expected to change: `ReconcileView.swift`,
    reconcile" card.
 4. The Settings Accounts footer shows only the original line. The "Use 1st of
    this month" button still appears after changing the date, and only then.
+5. No row, in the list or in its detail screen, shows a Pending badge. A held
+   transaction looks like any other row and can still be sent.
+6. A search of `YNAB Reconciler/` for `PendingBadge` and `isPending` finds
+   nothing.
 
 ## Tests
 
 - Build `YNAB Reconciler` for an iPhone simulator: no new warnings.
 - `swift test --package-path TransactionKit`: all pass.
-- Manual: acceptance criteria 1–4 in the simulator, including the largest
+- Manual: acceptance criteria 1–6 in the simulator, including the largest
   Dynamic Type size for criterion 2.
