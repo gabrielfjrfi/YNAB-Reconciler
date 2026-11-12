@@ -116,13 +116,13 @@ struct ReconcileReport {
             // Up tokens share a fixed "up:yeah:" prefix, so showing it is safe;
             // nothing of a YNAB token is shown beyond its length.
             let shape = service == "Up"
-                ? "is \(token.count) characters long and starts with \"\(token.prefix(7))…\" (Up tokens start with \"up:yeah:\")"
+                ? "is \(token.count) characters long and starts with \"\(token.prefix(7))…\" (Up tokens start with \"up:yeah:\" and are usually 136 characters)"
                 : "is \(token.count) characters long (YNAB tokens are 43)"
             fail("""
             \(service) rejected the token (HTTP 401/403).
               The token read from your keychain \(shape).
-              If you revoked it, store the new one with:
-                security add-generic-password -U -s ynab-reconciler -a \(service.lowercased())-token -w
+              To store it again, copy the token to the clipboard and run:
+                security add-generic-password -U -s ynab-reconciler -a \(service.lowercased())-token -w "$(pbpaste)"
             """)
         case NetworkError.wrongPlanOrAccount:
             fail("\(service) could not find the plan or account. Check YNAB_PLAN_ID and YNAB_ACCOUNT_ID in .env.")
