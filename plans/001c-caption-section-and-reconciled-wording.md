@@ -1,4 +1,4 @@
-# 001c — Caption in its own section; "Reconciled" after a refresh
+# 001c — Caption in its own section; "Reconciled from" whenever results show
 
 Follow-up to [001b](001b-start-date-caption-placement.md), after testing on the
 phone.
@@ -6,8 +6,9 @@ phone.
 ## Goal
 
 1. The "Ready to reconcile" card shows in full, with all four corners rounded.
-2. After a successful refresh, the caption reads **"Reconciled from …"**
-   instead of "Reconciling from …".
+2. Whenever results are on screen, the caption reads **"Reconciled from
+   <date>"**, where the date is the one those results were fetched from. The
+   empty state is the only place it reads "Reconciling from …".
 
 ## Why
 
@@ -17,7 +18,8 @@ phone.
    lost its top corners for the same reason). After a refresh the problem
    doesn't show, because the action groups are their own sections.
 2. "Reconciling" reads as if work is still in progress after the results are on
-   screen.
+   screen. The caption describes the results on screen, so it must show the
+   date they came from, even if the Settings date has since changed.
 
 ## Scope
 
@@ -45,12 +47,14 @@ App target only. Files expected to change: `ReconcileView.swift`,
   - Re-running the engine on existing data (`reconcile()`, e.g. after a split
     pick or Save in Settings) does not change it.
 - `startDateCaption`:
-  - `Reconciled from <date>` when `reconciliation != nil`,
-    `reconciledStartDate != nil`, and `reconciledStartDate` is the same
-    calendar day as `settings.startDate`;
-  - otherwise `Reconciling from <date>` (before the first refresh, or after
-    the date was changed and not yet refreshed).
-  - `<date>` is `settings.startDate`, formatted as now.
+  - **Results on screen** (`reconciliation != nil`):
+    `Reconciled from <reconciledStartDate>`. It does **not** follow
+    `settings.startDate`: changing the date in Settings leaves the caption
+    alone until the next successful refresh. If `reconciledStartDate` is
+    somehow nil, fall back to `settings.startDate`.
+  - **Empty state** (`reconciliation == nil`):
+    `Reconciling from <settings.startDate>`.
+  - Dates are formatted as now.
 
 ## Must not change
 
@@ -66,11 +70,12 @@ App target only. Files expected to change: `ReconcileView.swift`,
    plain text.
 2. After a successful refresh, the caption at the bottom reads
    `Reconciled from 1 <Mon> <Year>`.
-3. Change the date in Settings and return without refreshing: the caption
-   reads `Reconciling from <new date>`. Refresh: it reads
-   `Reconciled from <new date>`.
-4. A failed refresh (e.g. airplane mode) does not turn "Reconciling" into
-   "Reconciled".
+3. With results on screen, change the date in Settings and return without
+   refreshing: the caption still reads `Reconciled from 1 <Mon> <Year>` (the
+   old date). Refresh: it reads `Reconciled from <new date>`.
+4. A failed refresh (e.g. airplane mode) leaves the caption as it was:
+   `Reconciling from …` in the empty state, or the previous `Reconciled from …`
+   when results are on screen.
 
 ## Tests
 
