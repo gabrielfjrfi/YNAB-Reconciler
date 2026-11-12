@@ -13,9 +13,40 @@ extension ReconcileViewModel {
             pushedLogStorage: MemoryPushedLogStorage(),
             fixtureRefresh: {}
         )
+        model.installEdgeFixtures()
+        return model
+    }
+
+    /// The model behind the `-FixtureData` launch argument. It starts empty, and a refresh
+    /// installs the edge fixtures (or fails, when `refreshFails` is set). It never touches
+    /// the real defaults, Keychain, pushed log or network.
+    static func fixtureLaunch(refreshFails: Bool) -> ReconcileViewModel {
+        let suiteName = "FixtureLaunch"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        let box = FixtureModelBox()
+        let model = ReconcileViewModel(
+            defaults: defaults,
+            credentials: PreviewCredentialStore(),
+            pushedLogStorage: MemoryPushedLogStorage(),
+            fixtureRefresh: { [box] in
+                guard let model = box.model else { return }
+                if refreshFails {
+                    model.statusMessage = "Refresh failed. Try again in a moment."
+                } else {
+                    model.installEdgeFixtures()
+                }
+            }
+        )
+        box.model = model
+        return model
+    }
+
+    /// Loads the bundled edge fixtures (`edge_up`, `edge_ynab`) as if a refresh had fetched them.
+    func installEdgeFixtures() {
         let decoder = JSONDecoder()
-        let up = try! decoder.decode(UpResponse.self, from: fixtureData(named: "edge_up"))
-        let ynabResponse = try! decoder.decode(YNABResponse.self, from: fixtureData(named: "edge_ynab"))
+        let up = try! decoder.decode(UpResponse.self, from: Self.fixtureData(named: "edge_up"))
+        let ynabResponse = try! decoder.decode(YNABResponse.self, from: Self.fixtureData(named: "edge_ynab"))
         let ynab = ynabResponse.normalizedTransactions().values
 
         let categoryValues = Dictionary(
@@ -30,8 +61,7 @@ extension ReconcileViewModel {
         ]
         let payees = Set(ynab.map(\.payeeName).filter { !$0.isEmpty })
             .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
-        model.installFixture(up: up.data, ynab: ynab, categories: categories, payees: payees)
-        return model
+        installFixture(up: up.data, ynab: ynab, categories: categories, payees: payees)
     }
 
     static func dryRunFixturePreview() -> ReconcileViewModel {
@@ -40,7 +70,7 @@ extension ReconcileViewModel {
         return model
     }
 
-    private static func fixtureData(named name: String) -> Data {
+    fileprivate static func fixtureData(named name: String) -> Data {
         let url = Bundle.main.url(forResource: name, withExtension: "json", subdirectory: "PreviewFixtures")
             ?? Bundle.main.url(forResource: name, withExtension: "json")!
         return try! Data(contentsOf: url)
@@ -135,6 +165,11 @@ extension SendReview {
             prepared: prepared
         )
     }
+}
+
+/// Lets the fixture refresh closure reach the model it belongs to.
+final class FixtureModelBox {
+    weak var model: ReconcileViewModel?
 }
 
 private struct PreviewCredentialStore: CredentialStore {

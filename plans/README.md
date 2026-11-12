@@ -33,13 +33,23 @@ Follow these whenever you implement a plan.
    Never edit `Fixtures/` or any `*expected.json` to make a test pass.
 5. **Plans are read-only.** Never edit a plan file. Write only the response
    file for the plan you implemented.
-6. **Verify before reporting.**
-   - Build the `YNAB Reconciler` scheme for an iPhone simulator with no new
-     warnings.
-   - Run the TransactionKit tests:
-     `swift test --package-path TransactionKit` (or ⌘U on the
-     `TransactionKit-Package` scheme). All must pass.
-   - Do every manual check the plan lists, in the simulator where possible.
+6. **Verify before reporting.** All of these are required.
+   - **Build** the `YNAB Reconciler` scheme for an iPhone simulator. Read the
+     build log and list every warning in files you changed, or "none".
+   - **Engine tests:** `swift test --package-path TransactionKit`. All pass.
+   - **App tests:** run the `YNAB ReconcilerTests` target. All pass. If the
+     plan changes app logic (view models, formatting, rules), add or update
+     tests there.
+   - **Simulator checks:** on a named iPhone simulator (the newest
+     installed; name it in the response), launch the app, carry out **every**
+     acceptance criterion, and take a screenshot as evidence for each. Use
+     the `-FixtureData` launch argument for anything that needs results on
+     screen, and add `-FixtureRefreshFails` to check failure paths. Save the
+     screenshots as `plans/NNN-short-name/NN-what-it-shows.png` and link
+     them in the response.
+   - A check may be skipped only if it is impossible (say exactly why), and
+     then the status is **Blocked**, not "Partially done". "I didn't run it"
+     is not a reason.
 7. **Never commit or push.** Leave changes in the working tree. Syncing with
    GitHub is done separately so the local repo and GitHub stay identical.
 8. **No secrets.** Never write tokens, IDs from `.env`, or real transaction
@@ -63,9 +73,12 @@ Done | Partially done | Blocked — one line on why.
 Anything done differently from the plan, and why. "None" if none.
 
 ## Verification
-- Build: result (iPhone simulator, warnings introduced: none / list).
-- TransactionKit tests: N passed, N failed (name any failures).
-- Manual checks: each check from the plan with pass / fail.
+- Build: succeeded / failed on <simulator>. Warnings in changed files: none / list.
+- Engine tests: N passed, N failed (name any failures).
+- App tests: N passed, N failed (name any failures; list tests added).
+- Simulator checks (<simulator name>):
+  1. <criterion> — pass / fail — [screenshot](NNN-short-name/01-....png)
+  2. ...
 
 ## Open questions
 Anything that needs a decision before this can be called done. "None" if none.

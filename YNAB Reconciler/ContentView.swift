@@ -12,6 +12,13 @@ struct ContentView: View {
 
     @MainActor
     init() {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-FixtureData") {
+            _model = State(initialValue: .fixtureLaunch(refreshFails: arguments.contains("-FixtureRefreshFails")))
+            return
+        }
+        #endif
         _model = State(initialValue: ReconcileViewModel())
     }
 
