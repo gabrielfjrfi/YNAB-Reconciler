@@ -13,6 +13,11 @@
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* YNAB Reconciler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "YNAB Reconciler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8740B69C30A5A762007AF658 /* AGENTS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = AGENTS.md; sourceTree = "<group>"; };
+		8740B69D30A5A762007AF658 /* API.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = API.md; sourceTree = "<group>"; };
+		8740B69E30A5A762007AF658 /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
+		8740B69F30A5A762007AF658 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		8740B6A330A5A762007AF658 /* SPEC.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SPEC.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -34,6 +39,11 @@
 			path = "YNAB Reconciler";
 			sourceTree = "<group>";
 		};
+		8740B6A230A5A762007AF658 /* plans */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = plans;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +60,12 @@
 		000000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				8740B69C30A5A762007AF658 /* AGENTS.md */,
+				8740B69D30A5A762007AF658 /* API.md */,
+				8740B69E30A5A762007AF658 /* ARCHITECTURE.md */,
+				8740B69F30A5A762007AF658 /* CLAUDE.md */,
+				8740B6A230A5A762007AF658 /* plans */,
+				8740B6A330A5A762007AF658 /* SPEC.md */,
 				000000000000000000000010 /* YNAB Reconciler */,
 				000000000000000000000020 /* Products */,
 			);
