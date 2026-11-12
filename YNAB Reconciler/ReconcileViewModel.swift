@@ -249,6 +249,8 @@ final class ReconcileViewModel {
     var isSending = false
     var sendResultMessage: String?
     var lastRefreshHadNoDiscrepancies = false
+    /// The start date used by the last successful refresh; the caption describes those results.
+    private(set) var reconciledStartDate: Date?
 
     /// The 1st of the month the model last applied automatically.
     private var automaticStartDate: Date
@@ -370,6 +372,11 @@ final class ReconcileViewModel {
     }
 
     var startDateCaption: String {
+        if reconciliation != nil {
+            let date = (reconciledStartDate ?? settings.startDate)
+                .formatted(.dateTime.day().month(.abbreviated).year())
+            return "Reconciled from \(date)"
+        }
         let date = settings.startDate.formatted(.dateTime.day().month(.abbreviated).year())
         return "Reconciling from \(date)"
     }
@@ -416,7 +423,8 @@ final class ReconcileViewModel {
         let planID = settings.ynabPlanID
         let accountID = settings.ynabAccountID
         let upAccountID = settings.upAccountID.isEmpty ? nil : settings.upAccountID
-        let since = localDate(from: settings.startDate)
+        let startDate = settings.startDate
+        let since = localDate(from: startDate)
         let timeZone = TimeZone.current
         let parameters = reconciliationParameters
         let progress: @Sendable (RefreshProgress) async -> Void = { [weak self] value in
@@ -447,6 +455,7 @@ final class ReconcileViewModel {
             installReconciliation(output.reconciliation)
             lastRefreshHadNoDiscrepancies = hasNoDiscrepancies
             lastRefreshDate = Date()
+            reconciledStartDate = startDate
             defaults.set(lastRefreshDate, forKey: DefaultsKey.lastRefresh)
             statusMessage = nil
         } catch is CancellationError {
@@ -731,6 +740,7 @@ final class ReconcileViewModel {
         settings.ynabPlanID = "fixture-plan"
         settings.ynabAccountID = "fixture-account"
         settings.partnerHandles = "$partner_handle"
+        reconciledStartDate = settings.startDate
         reconcile()
     }
 

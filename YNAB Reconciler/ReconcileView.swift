@@ -69,7 +69,9 @@ struct ReconcileView: View {
                         .padding(.vertical)
                     }
                 }
-                StartDateCaption(text: model.startDateCaption)
+                Section {
+                    StartDateCaption(text: model.startDateCaption)
+                }
             }
             .appListSurface()
             .toolbarBackground(.hidden, for: .tabBar)
