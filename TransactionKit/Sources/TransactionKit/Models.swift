@@ -92,6 +92,10 @@ public struct UpTransaction: Decodable, Identifiable, Equatable, Sendable {
     public let createdAt: String
     public let date: LocalDate
     public let money: Money
+    /// For a settled transaction that was first held, the amount Up held at
+    /// the time. Differs from `money` when a hold settles for another amount
+    /// (a tip, a fuel pre-authorisation, a hotel deposit).
+    public let heldCents: Int?
     public let categoryID: String?
     public let parentCategoryID: String?
 
@@ -108,6 +112,11 @@ public struct UpTransaction: Decodable, Identifiable, Equatable, Sendable {
         let transactionType: String?
         let createdAt: String
         let amount: Amount
+        let holdInfo: HoldInfo?
+    }
+
+    private struct HoldInfo: Decodable {
+        let amount: Amount?
     }
 
     private struct Amount: Decodable {
@@ -139,6 +148,7 @@ public struct UpTransaction: Decodable, Identifiable, Equatable, Sendable {
         createdAt = attributes.createdAt
         date = try LocalDate(upCreatedAt: attributes.createdAt)
         money = Money(upBaseUnits: attributes.amount.valueInBaseUnits)
+        heldCents = attributes.holdInfo?.amount?.valueInBaseUnits
         categoryID = relationships?.category?.data?.id
         parentCategoryID = relationships?.parentCategory?.data?.id
     }

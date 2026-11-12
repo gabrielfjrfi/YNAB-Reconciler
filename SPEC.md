@@ -56,11 +56,15 @@ different, wrong answers — see §8.
 
 | # | Pass | Consumes |
 |---|------|----------|
-| 1 | Direct match | one Up + one YNAB |
+| 1a | Direct match, names agree | one Up + one YNAB |
+| 1h | Held-amount corrections | one Up + one YNAB |
+| 1s | Shared costs already in YNAB, names agree | two Up + one YNAB |
+| 1b | Direct match, amount only | one Up + one YNAB |
 | 2 | Merchant reversals | two Up |
 | 3 | Shared costs already in YNAB | two Up + one YNAB |
 | 4 | Shared cost shortlists | claims two Up (reversible by the user) |
-| 5 | Full repayments | two Up |
+| 4f | Repaid half of a bill entered at full price | one Up (plus a pass 1 pair) |
+| 5 | Full repayments, partners only | two Up |
 | 6 | Amount corrections | one Up + one YNAB |
 
 Everything left over is a genuine gap.
@@ -72,8 +76,53 @@ Pair an Up transaction with a YNAB transaction where:
 - the **signed amounts are identical**, to the cent, and
 - `|up.date − ynab.date| ≤ tolerance` days (default 7).
 
-Payee and description text is **never** used for matching, in this or any
-other pass. It appears in output only.
+Pass 1 runs in stages, and payee text decides only **which stage** a pair
+is tried in — it never rejects a pair, and amount and date rules are
+identical in every stage:
+
+- **1a** claims pairs whose Up description and YNAB payee *look alike*
+  (below).
+- **1h** and **1s** run next (see their own sections).
+- **1b** claims whatever is left on amount and date alone.
+
+Without this, a YNAB row holding your half of one bill is taken by an
+unrelated purchase of the same amount — a −12.00 coffee claiming the −12.00
+row that is really your half of a −24.00 snack bar — and both shared costs are
+stranded (§8).
+
+**Names look alike** when, after folding case and accents, removing
+apostrophes, dropping a card-processor prefix (`SQ *`, `SP `, `PAYPAL *`,
+`ZLR*` and similar) and a leading `the`, and splitting on anything that is not
+a letter or digit:
+
+- the first words are equal and at least three letters long, or
+- with spaces removed, the shorter name (at least four characters) is
+  contained in the longer.
+
+`Market Lane` ≈ `Market Lane Coffee`; `SQ *COFFEE WEEKEND P,Melbourne` ≈
+`Coffee Weekend`; `SQ *COFFEE WEEKEND` ≉ `Diggy Doos Coffee`. Payees typed
+differently from the bank (`CommBank Savings` → `The Gladstone`) still match
+in 1b. The anonymised fixtures never have agreeing names, so 1a and 1s find
+nothing there and the fixture results are unchanged.
+
+### Pass 1h — Held-amount corrections
+
+A YNAB row entered while a transaction was pending, after which the hold
+settled for a different amount (a tip, a fuel pre-authorisation, a hotel
+deposit). Up keeps the original amount in `holdInfo.amount` on the settled
+transaction.
+
+- the Up transaction is settled, its held amount differs from its amount, and
+- `ynab.cents == held amount` exactly, and
+- `|up.date − ynab.date| ≤ tolerance`.
+
+Rank by date gap, YNAB id, Up id; one-to-one. Output is an amount correction
+(`up.cents − ynab.cents`), whatever the size of the difference.
+
+### Pass 1s — Shared costs already in YNAB, names agree
+
+Pass 3, restricted to triples whose purchase description and YNAB payee look
+alike. Runs before 1b for the reason given above.
 
 Matching is **one-to-one**. A set difference is wrong here: identical amounts
 recur, so each transaction may be consumed by at most one partner.
@@ -154,11 +203,35 @@ Candidate purchases are Up outflows where:
 
 Keep the top `shortlistSize` (default 5) candidates per repayment.
 
+### Pass 4f — Repaid half of a bill entered at full price
+
+A partner repaid half of a bill that YNAB already holds at the full amount, so
+pass 1 consumed the bill and the repayment has nothing to pair with. The YNAB
+row should be corrected to your half.
+
+Candidate repayments are partner inflows (§2), not `Refund`, without a user
+decision, that either got no shortlist in pass 4 or whose shortlist has
+nothing selected and is not tied. A convincing unentered bill therefore keeps
+priority. Candidate bills are the Up outflows of pass 1 pairs where:
+
+- `|total − 2 × deposit.cents| ≤ 1` — exactly half, as band A
+- `−2 ≤ (deposit.date − purchase.date) ≤ settleWindow`
+- descriptions differ, case insensitively
+
+Rank by ascending `|offset|`, purchase date, purchase id, deposit id; claim
+one-to-one. Each claim becomes an amount correction on the pair's YNAB row:
+`ynab_cents` the full price, `up_cents` your share (`purchase + deposit`),
+`delta_cents` the deposit, and the deposit id recorded as the repayment. The
+deposit leaves its shortlist, if it had one.
+
 ### Pass 5 — Full repayments
 
 As pass 2, but the credit comes from someone else rather than the merchant.
-Identical conditions **except** that descriptions need not match; categories
-still must, where both are set.
+Identical conditions **except** that descriptions need not match, and the
+credit must match the partner list (§2). Categories still must agree, where
+both are set. Without the partner rule, a Saver transfer or a stranger's
+payment that happens to equal a purchase cancels it, and because the pair nets
+to zero the balance identity cannot notice.
 
 This runs *after* pass 4 because a repayment that is exactly half of one bill
 can also be equal and opposite to another — see §8.
@@ -275,7 +348,7 @@ Four actionable groups, all resolved in YNAB:
 |---|---|---|
 | **Enter in YNAB** | unmatched Up transactions not represented by a shortlist | its own amount |
 | **Enter your half** | one row per shortlist; if a purchase is selected, your share | `purchase + deposit`, or the deposit's own amount when unassigned |
-| **Correct the amount** | pass 6 pairs | `up.cents − ynab.cents` |
+| **Correct the amount** | pass 1h, 4f and 6 pairs | `up.cents − ynab.cents` (4f: the repayment) |
 | **Check these yourself** | unmatched YNAB rows | `−ynab.cents`, assuming deletion |
 
 A repayment with a shortlist is represented **only** by its shortlist row, never
@@ -309,7 +382,7 @@ The identity catches double-counting, never wrongful cancellation.
 
 ## 8. Ordering traps
 
-Two real bugs, both fixed by the ordering in §3. A port that reorders the passes
+Real bugs, each fixed by the ordering in §3. A port that reorders the passes
 will reintroduce them, and both fixtures cover them.
 
 **Reversals before shortlists.** An $11.17 grocery repayment once cancelled an
@@ -327,6 +400,12 @@ round $46.00 remainder, and the true cancellation never happened. Excluding
 pass 5 after it, fixes it.
 
 ---
+
+**Names before amounts.** A −12.00 coffee was paired with a −12.00 YNAB row
+that was really your half of a −24.00 snack bar, two days earlier on amount
+alone. The coffee's own half (−6.00) was left as "check this yourself" and both
+repayments were offered to unrelated bills. Running agreeing-name matches and
+agreeing-name shared costs before amount-only matches fixes it (pass 1).
 
 ## 9. Defaults learned from history
 

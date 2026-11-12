@@ -107,6 +107,9 @@ public struct AmountCorrection: Equatable, Sendable {
     public let ynabCents: Int
     public let upCents: Int
     public let deltaCents: Int
+    /// Set when the correction exists because a partner repaid half of a bill
+    /// that YNAB holds at the full price: `upCents` is then your share.
+    public var repaymentID: String? = nil
 }
 
 public struct AddAction: Equatable, Sendable {
@@ -229,17 +232,47 @@ public struct Reconciler: Sendable {
             warnings.append(.noPartnersConfigured)
         }
 
-        let direct = try matchDirect(
+        // Pass 1 runs in stages. Matches whose names agree go first, then
+        // shared costs already in YNAB whose names agree, and only then pairs
+        // on amount alone. Otherwise a YNAB row holding your half of one bill
+        // is claimed by an unrelated purchase of the same amount (SPEC §3).
+        let directProgress = passProgress(.directMatches, number: 1, reporter: progress)
+        let named = try matchDirect(
             up: up,
             ynab: filteredYNAB,
             tolerance: parameters.tolerance,
+            requireAlikeNames: true,
             checkCancellation: checkCancellation,
-            progress: passProgress(.directMatches, number: 1, reporter: progress)
+            progress: directProgress
+        )
+        let held = try matchHeldAmounts(
+            up: named.remainingUp,
+            ynab: named.remainingYNAB,
+            tolerance: parameters.tolerance,
+            checkCancellation: checkCancellation
+        )
+        let namedSplits = try matchExistingSplits(
+            up: held.remainingUp,
+            ynab: held.remainingYNAB,
+            tolerance: parameters.tolerance,
+            reimbursementWindow: parameters.reimbursementWindow,
+            requireAlikeNames: true,
+            checkCancellation: checkCancellation,
+            progress: directProgress
+        )
+        let direct = try matchDirect(
+            up: namedSplits.remainingUp,
+            ynab: namedSplits.remainingYNAB,
+            tolerance: parameters.tolerance,
+            requireAlikeNames: false,
+            checkCancellation: checkCancellation,
+            progress: directProgress
         )
         let reversals = try matchZeroNet(
             up: direct.remainingUp,
             window: parameters.reimbursementWindow,
             requireSameMerchant: true,
+            partners: nil,
             checkCancellation: checkCancellation,
             progress: passProgress(.reversals, number: 2, reporter: progress)
         )
@@ -248,20 +281,49 @@ public struct Reconciler: Sendable {
             ynab: direct.remainingYNAB,
             tolerance: parameters.tolerance,
             reimbursementWindow: parameters.reimbursementWindow,
+            requireAlikeNames: false,
             checkCancellation: checkCancellation,
             progress: passProgress(.existingSplits, number: 3, reporter: progress)
         )
-        let shortlisted = try buildShareBlocks(
+        var shortlisted = try buildShareBlocks(
             up: existing.remainingUp,
             parameters: parameters,
             checkCancellation: checkCancellation,
             progress: passProgress(.sharedCosts, number: 4, reporter: progress)
         )
-        let availableForRepayment = existing.remainingUp.filter { !shortlisted.claimedIDs.contains($0.id) }
+
+        // A repayment left without a convincing unentered bill may be half of
+        // one already in YNAB at the full price: that row needs correcting.
+        let upByID = Dictionary(up.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let ynabByID = Dictionary(filteredYNAB.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let matchedPairs: [(UpTransaction, YNABTransaction)] = (named.matches + direct.matches).compactMap { match in
+            guard let bank = upByID[match.upID], let budget = ynabByID[match.ynabID] else { return nil }
+            return (bank, budget)
+        }
+        let blockIDs = Set(shortlisted.blocks.map(\.depositID))
+        let openBlockIDs = Set(shortlisted.blocks.filter { $0.chosenPurchaseID == nil && !$0.tied }.map(\.depositID))
+        let fullPriceDeposits = existing.remainingUp.filter { deposit in
+            let decision = parameters.splitDecisions[deposit.id]
+            return deposit.money.cents > 0
+                && isPartner(deposit, partners: parameters.partners)
+                && deposit.transactionType != "Refund"
+                && (decision == nil || decision == .automatic)
+                && (openBlockIDs.contains(deposit.id) || !blockIDs.contains(deposit.id))
+        }
+        let fullPrice = matchFullPriceRepayments(
+            deposits: fullPriceDeposits,
+            matchedPairs: matchedPairs,
+            settleWindow: parameters.settleWindow
+        )
+        shortlisted.blocks.removeAll { fullPrice.usedIDs.contains($0.depositID) }
+        let claimed = shortlisted.claimedIDs.union(fullPrice.usedIDs)
+
+        let availableForRepayment = existing.remainingUp.filter { !claimed.contains($0.id) }
         let repaid = try matchZeroNet(
             up: availableForRepayment,
             window: parameters.reimbursementWindow,
             requireSameMerchant: false,
+            partners: parameters.partners,
             checkCancellation: checkCancellation,
             progress: passProgress(.repayments, number: 5, reporter: progress)
         )
@@ -273,6 +335,7 @@ public struct Reconciler: Sendable {
             checkCancellation: checkCancellation,
             progress: passProgress(.corrections, number: 6, reporter: progress)
         )
+        let corrections = held.matches + fullPrice.matches + amended.matches
 
         let blockDepositIDs = Set(shortlisted.blocks.map(\.depositID))
         let adds = amended.remainingUp
@@ -306,17 +369,17 @@ public struct Reconciler: Sendable {
             addTotalCents: adds.reduce(0) { $0 + $1.cents },
             shareTotalCents: shareTotal,
             unassignedRepaymentTotalCents: unassignedTotal,
-            amendTotalCents: amended.matches.reduce(0) { $0 + $1.deltaCents },
+            amendTotalCents: corrections.reduce(0) { $0 + $1.deltaCents },
             queryTotalCents: queries.reduce(0) { $0 - $1.cents }
         )
 
         return Reconciliation(
-            matched: direct.matches.sorted { $0.upID < $1.upID },
+            matched: (named.matches + direct.matches).sorted { $0.upID < $1.upID },
             reversals: reversals.matches.sorted { $0.purchaseID < $1.purchaseID },
-            splitsInYNAB: existing.matches.sorted { $0.ynabID < $1.ynabID },
+            splitsInYNAB: (namedSplits.matches + existing.matches).sorted { $0.ynabID < $1.ynabID },
             repaid: repaid.matches.sorted { $0.purchaseID < $1.purchaseID },
             shareBlocks: shortlisted.blocks.sorted { $0.depositID < $1.depositID },
-            amends: amended.matches.sorted { $0.upID < $1.upID },
+            amends: corrections.sorted { $0.upID < $1.upID },
             adds: adds,
             queries: queries,
             totals: totals,
@@ -359,6 +422,7 @@ private extension Reconciler {
         up: [UpTransaction],
         ynab: [YNABTransaction],
         tolerance: Int,
+        requireAlikeNames: Bool,
         checkCancellation: () throws -> Void,
         progress: (Int, Int) -> Void
     ) throws -> DirectResult {
@@ -370,9 +434,9 @@ private extension Reconciler {
             for (budgetIndex, budget) in (ynabByAmount[bank.money.cents] ?? []).enumerated() {
                 if budgetIndex.isMultiple(of: 256) { try checkCancellation() }
                 let gap = abs(bank.date.days(to: budget.date))
-                if gap <= tolerance {
-                    candidates.append(.init(gap: gap, up: bank, ynab: budget))
-                }
+                guard gap <= tolerance else { continue }
+                if requireAlikeNames, !PayeeNames.alike(bank.description, budget.payeeName) { continue }
+                candidates.append(.init(gap: gap, up: bank, ynab: budget))
             }
             reportProgress(bankIndex + 1, total: up.count, progress: progress)
         }
@@ -418,11 +482,17 @@ private extension Reconciler {
         up: [UpTransaction],
         window: Int,
         requireSameMerchant: Bool,
+        partners: [String]?,
         checkCancellation: () throws -> Void,
         progress: (Int, Int) -> Void
     ) throws -> ZeroNetResult {
         let purchases = up.filter { $0.money.cents < 0 }
-        let credits = up.filter { $0.money.cents > 0 }
+        // Pass 5 passes the partner list: only someone you split costs with
+        // can repay a bill in full. A Saver transfer or a stranger's payment
+        // that happens to equal a purchase must not cancel it.
+        let credits = up.filter { credit in
+            credit.money.cents > 0 && (partners.map { isPartner(credit, partners: $0) } ?? true)
+        }
         let creditsByAmount = Dictionary(grouping: credits, by: { $0.money.cents })
         var candidates: [ZeroNetCandidate] = []
         progress(0, purchases.count)
@@ -483,6 +553,7 @@ private extension Reconciler {
         ynab: [YNABTransaction],
         tolerance: Int,
         reimbursementWindow: Int,
+        requireAlikeNames: Bool,
         checkCancellation: () throws -> Void,
         progress: (Int, Int) -> Void
     ) throws -> ExistingResult {
@@ -501,6 +572,7 @@ private extension Reconciler {
             for purchaseDay in (budgetDay - tolerance)...(budgetDay + tolerance) {
                 for purchase in purchasesByDay[purchaseDay] ?? [] where purchase.money.cents < budget.money.cents {
                     try checkCancellation()
+                    if requireAlikeNames, !PayeeNames.alike(purchase.description, budget.payeeName) { continue }
                     let dateGap = abs(purchaseDay - budgetDay)
                     let requiredDeposit = budget.money.cents - purchase.money.cents
                     guard let depositsByDay = depositsByAmountAndDay[requiredDeposit] else { continue }
@@ -773,6 +845,107 @@ private extension Reconciler {
         )
     }
 
+    /// A settled Up transaction whose original held amount equals a YNAB row:
+    /// the row was entered while pending and the charge then changed. Exact,
+    /// so it applies whatever the size of the difference.
+    func matchHeldAmounts(
+        up: [UpTransaction],
+        ynab: [YNABTransaction],
+        tolerance: Int,
+        checkCancellation: () throws -> Void
+    ) throws -> CorrectionResult {
+        let ynabByAmount = Dictionary(grouping: ynab, by: { $0.money.cents })
+        var candidates: [CorrectionCandidate] = []
+        for bank in up {
+            try checkCancellation()
+            guard bank.status != "HELD",
+                  let heldCents = bank.heldCents,
+                  heldCents != bank.money.cents else { continue }
+            for budget in ynabByAmount[heldCents] ?? [] {
+                let gap = abs(bank.date.days(to: budget.date))
+                guard gap <= tolerance else { continue }
+                candidates.append(.init(magnitude: 0, dateGap: gap, ynab: budget, up: bank))
+            }
+        }
+        candidates.sort {
+            if $0.dateGap != $1.dateGap { return $0.dateGap < $1.dateGap }
+            if $0.ynab.id != $1.ynab.id { return $0.ynab.id < $1.ynab.id }
+            return $0.up.id < $1.up.id
+        }
+        var usedUp: Set<String> = []
+        var usedYNAB: Set<String> = []
+        var matches: [AmountCorrection] = []
+        for candidate in candidates {
+            guard !usedUp.contains(candidate.up.id), !usedYNAB.contains(candidate.ynab.id) else { continue }
+            usedUp.insert(candidate.up.id)
+            usedYNAB.insert(candidate.ynab.id)
+            matches.append(.init(
+                ynabID: candidate.ynab.id,
+                upID: candidate.up.id,
+                ynabCents: candidate.ynab.money.cents,
+                upCents: candidate.up.money.cents,
+                deltaCents: candidate.up.money.cents - candidate.ynab.money.cents
+            ))
+        }
+        return .init(
+            matches: matches,
+            remainingUp: up.filter { !usedUp.contains($0.id) },
+            remainingYNAB: ynab.filter { !usedYNAB.contains($0.id) }
+        )
+    }
+
+    struct FullPriceResult {
+        let matches: [AmountCorrection]
+        let usedIDs: Set<String>
+    }
+
+    /// A partner repayment that is exactly half of a bill YNAB already holds
+    /// at the full price: the YNAB row should be corrected to your half.
+    func matchFullPriceRepayments(
+        deposits: [UpTransaction],
+        matchedPairs: [(UpTransaction, YNABTransaction)],
+        settleWindow: Int
+    ) -> FullPriceResult {
+        struct Candidate {
+            let offset: Int
+            let purchase: UpTransaction
+            let budget: YNABTransaction
+            let deposit: UpTransaction
+        }
+        var candidates: [Candidate] = []
+        for deposit in deposits {
+            for (purchase, budget) in matchedPairs where purchase.money.cents < 0 {
+                let offset = purchase.date.days(to: deposit.date)
+                guard offset >= -2, offset <= settleWindow else { continue }
+                guard purchase.description.caseInsensitiveCompare(deposit.description) != .orderedSame else { continue }
+                guard abs(abs(purchase.money.cents) - 2 * deposit.money.cents) <= 1 else { continue }
+                candidates.append(.init(offset: abs(offset), purchase: purchase, budget: budget, deposit: deposit))
+            }
+        }
+        candidates.sort {
+            if $0.offset != $1.offset { return $0.offset < $1.offset }
+            if $0.purchase.date != $1.purchase.date { return $0.purchase.date < $1.purchase.date }
+            if $0.purchase.id != $1.purchase.id { return $0.purchase.id < $1.purchase.id }
+            return $0.deposit.id < $1.deposit.id
+        }
+        var used: Set<String> = []
+        var matches: [AmountCorrection] = []
+        for candidate in candidates {
+            guard !used.contains(candidate.purchase.id), !used.contains(candidate.deposit.id) else { continue }
+            used.insert(candidate.purchase.id)
+            used.insert(candidate.deposit.id)
+            matches.append(.init(
+                ynabID: candidate.budget.id,
+                upID: candidate.purchase.id,
+                ynabCents: candidate.budget.money.cents,
+                upCents: candidate.purchase.money.cents + candidate.deposit.money.cents,
+                deltaCents: candidate.deposit.money.cents,
+                repaymentID: candidate.deposit.id
+            ))
+        }
+        return .init(matches: matches, usedIDs: used)
+    }
+
     func sameCategory(_ lhs: UpTransaction, _ rhs: UpTransaction) -> Bool {
         lhs.categoryID != nil
             && lhs.categoryID == rhs.categoryID
@@ -902,5 +1075,45 @@ public enum SplitScorer {
         if doubled < denominator { return quotient }
         if doubled > denominator { return quotient + 1 }
         return quotient.isMultiple(of: 2) ? quotient : quotient + 1
+    }
+}
+
+/// Loose comparison of an Up description with a hand-typed YNAB payee. Used
+/// only to decide which pairing to try first, never to reject a match.
+public enum PayeeNames {
+    static let processorPrefixes = ["sq *", "sq*", "sp ", "sp*", "paypal *", "pp*", "zlr*", "lsp*", "tst*", "ezi*"]
+
+    /// True when the first meaningful words agree ("Market Lane Coffee" and
+    /// "Market Lane"), or one name contains the other once spaces and
+    /// punctuation are gone.
+    public static func alike(_ lhs: String, _ rhs: String) -> Bool {
+        let left = tokens(lhs)
+        let right = tokens(rhs)
+        guard let leftFirst = left.first, let rightFirst = right.first else { return false }
+        if leftFirst == rightFirst && leftFirst.count >= 3 { return true }
+        let leftCompact = left.joined()
+        let rightCompact = right.joined()
+        let (shorter, longer) = leftCompact.count <= rightCompact.count
+            ? (leftCompact, rightCompact)
+            : (rightCompact, leftCompact)
+        return shorter.count >= 4 && longer.contains(shorter)
+    }
+
+    static func tokens(_ text: String) -> [String] {
+        var value = text
+            .folding(options: [.diacriticInsensitive, .widthInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+            .lowercased()
+            .replacingOccurrences(of: "'", with: "")
+            .replacingOccurrences(of: "\u{2019}", with: "")
+        if let prefix = processorPrefixes.first(where: { value.hasPrefix($0) }) {
+            value.removeFirst(prefix.count)
+        }
+        var words = value
+            .split(whereSeparator: { !($0.isASCII && ($0.isLetter || $0.isNumber)) })
+            .map(String.init)
+        while words.first == "the" {
+            words.removeFirst()
+        }
+        return words
     }
 }

@@ -247,7 +247,15 @@ struct Report {
         for amend in result.amends {
             out.append("  Up   " + upLine(amend.upID))
             out.append("  YNAB " + ynabLine(amend.ynabID))
-            out.append("       difference \(money(amend.deltaCents))")
+            if let repaymentID = amend.repaymentID {
+                out.append("  Paid " + upLine(repaymentID))
+                out.append("       repaid half: change YNAB from \(money(amend.ynabCents)) to \(money(amend.upCents))")
+            } else if let held = upByID[amend.upID]?.heldCents, held == amend.ynabCents {
+                out.append("       entered while pending at \(money(held)); settled at \(money(amend.upCents))")
+            } else {
+                out.append("       difference \(money(amend.deltaCents))")
+            }
+            out.append("")
         }
 
         section(&out, "CHECK THESE YOURSELF", result.queries.count, "In YNAB, nothing in Up behind it.")

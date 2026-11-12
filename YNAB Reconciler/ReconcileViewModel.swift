@@ -830,7 +830,9 @@ final class ReconcileViewModel {
             id: correction.upID,
             kind: .amend,
             title: transaction.description,
-            detail: "YNAB differs by \(Money(cents: correction.deltaCents).formatted)",
+            detail: correction.repaymentID == nil
+                ? "YNAB differs by \(Money(cents: correction.deltaCents).formatted)"
+                : "Repaid half: change YNAB from \(Money(cents: correction.ynabCents).formatted) to \(Money(cents: correction.upCents).formatted)",
             date: transaction.date,
             balanceEffectCents: correction.deltaCents,
             isSendable: false
